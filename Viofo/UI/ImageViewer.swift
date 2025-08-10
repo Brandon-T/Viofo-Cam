@@ -13,9 +13,7 @@ struct ImageViewer: View {
     private let minZoom: CGFloat = 1.0
     private let maxZoom: CGFloat = 4.0
     
-    @Environment(\.dismiss)
-    private var dismiss
-    
+    @Environment(\.dismiss) private var dismiss
     @State private var zoom: CGFloat = 1.0
     @State private var committedZoom: CGFloat = 1.0
     

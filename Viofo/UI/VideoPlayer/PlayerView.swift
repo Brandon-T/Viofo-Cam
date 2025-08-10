@@ -8,26 +8,16 @@
 import SwiftUI
 
 struct PlayerView: View {
-    @StateObject
-    private var playerModel: VLCPlayerModel
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var showControls: Bool = false
+    @State private var lastInteraction: Date = .now
+    @State private var containerSize: CGSize = .zero
+    @State private var isFill: Bool = false
+    
+    @StateObject private var playerModel: VLCPlayerModel
     
     private var url: URL
-    
-    @Environment(\.dismiss)
-    private var dismiss
-    
-    @State
-    private var showControls: Bool = false
-    
-    @State
-    private var lastInteraction: Date = .now
-    
-    @State
-    private var containerSize: CGSize = .zero
-    
-    @State
-    private var isFill: Bool = false
-    
     private var autoHideDelay: TimeInterval = 3.0
     
     init(playerModel: VLCPlayerModel, url: URL) {
@@ -114,22 +104,16 @@ struct PlayerView: View {
 }
 
 private struct PlayerControls: View {
-    @ObservedObject
-    var model: VLCPlayerModel
+    @ObservedObject var model: VLCPlayerModel
+    @ObservedObject private var observer: VLCPlayerObserver
     
-    @ObservedObject
-    private var observer: VLCPlayerObserver
-
-    @State
-    private var isScrubbing: Bool = false
-    
-    @State
-    private var sliderPosition: Double = 0.0
+    @State private var isScrubbing: Bool = false
+    @State private var scrubbingPosition: Double = 0.0
     
     init(model: VLCPlayerModel) {
         self.model = model
         self._observer = .init(initialValue: VLCPlayerObserver(player: model.player))
-        self._sliderPosition = .init(initialValue: Double(model.player.position))
+        self._scrubbingPosition = .init(initialValue: Double(model.player.position))
     }
 
     var body: some View {
@@ -155,27 +139,29 @@ private struct PlayerControls: View {
             
             if observer.isSeekable {
                 HStack(spacing: 10.0) {
-                    Text(formatTime(isScrubbing ? observer.duration * sliderPosition : observer.elapsedTime))
+                    Text(formatTime(isScrubbing ? observer.duration * scrubbingPosition : observer.elapsedTime))
                         .foregroundStyle(.white)
                     
                     Slider(
-                        value: $sliderPosition,
+                        value: $scrubbingPosition,
                         in: 0...1,
                         onEditingChanged: { isEditing in
                             isScrubbing = isEditing
-                            if !isEditing {
-                                seek(toPosition: sliderPosition)
+                            if isEditing {
+                                scrubbingPosition = Double(observer.position)
+                            } else {
+                                seek(toPosition: scrubbingPosition)
                             }
                         }
                     )
                     .tint(.white)
                     .onChange(of: observer.position) { newPosition in
                         if !isScrubbing {
-                            sliderPosition = Double(newPosition)
+                            scrubbingPosition = Double(newPosition)
                         }
                     }
                     
-                    Text(formatTime(isScrubbing ? observer.duration - (observer.duration * sliderPosition) : observer.remainingTime))
+                    Text(formatTime(isScrubbing ? observer.duration - (observer.duration * scrubbingPosition) : observer.remainingTime))
                         .foregroundStyle(.white)
                 }
             }

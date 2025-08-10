@@ -9,77 +9,20 @@ import AVKit
 import UIKit
 import SwiftUI
 
-private enum MediaType {
-    case videos
-    case images
-}
-
-private enum SectionBucket: CaseIterable {
-    case today, yesterday, last7, last14, last30, last365, other
-
-    var title: String {
-        switch self {
-        case .today:   return "Today"
-        case .yesterday: return "Yesterday"
-        case .last7:   return "Past 7 days"
-        case .last14:  return "Past 14 days"
-        case .last30:  return "Past Month"
-        case .last365: return "Past Year"
-        case .other: return "Very Old"
-        }
-    }
-    
-    static func bucket(for date: Date, now: Date = Date()) -> SectionBucket? {
-        let cal = Calendar.current
-        let startToday = cal.startOfDay(for: now)
-        let startYesterday = cal.date(byAdding: .day, value: -1, to: startToday)!
-        let start7 = cal.date(byAdding: .day, value: -7, to: startToday)!
-        let start14 = cal.date(byAdding: .day, value: -14, to: startToday)!
-        let start30 = cal.date(byAdding: .day, value: -30, to: startToday)!
-        let start365 = cal.date(byAdding: .day, value: -365, to: startToday)!
-
-        switch date {
-        case startToday...:                     return .today
-        case startYesterday..<startToday:       return .yesterday
-        case start7..<startYesterday:           return .last7
-        case start14..<start7:                  return .last14
-        case start30..<start14:                 return .last30
-        case start365..<start30:                return .last365
-        default:                                return .other
-        }
-    }
-}
-
 struct FilesGridView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+    @Environment(\.dismiss) private var dismiss
     
-    @State
-    private var files = [CameraFile]()
+    @State private var files = [CameraFile]()
+    @State private var selectedFile: CameraFile?
     
-    @State
-    private var selectedFile: CameraFile?
+    @State private var isScrolling: Bool = false
+    @State private var showControls = true
+    @State private var lastInteraction = Date()
+    @State private var isFill = false
+    @State private var containerSize: CGSize = .zero
+    @State private var selectedTab: MediaType = .videos
     
-    @State
-    private var isScrolling: Bool = false
-    
-    @State
-    private var showControls = true
-    
-    @State
-    private var lastInteraction = Date()
-    
-    @State
-    private var isFill = false
-    
-    @State
-    private var containerSize: CGSize = .zero
-    
-    @State
-    private var selectedTab: MediaType = .videos
-    
-    @StateObject
-    var playerModel: VLCPlayerModel
+    @StateObject var playerModel: VLCPlayerModel
     
     private let autoHideDelay: TimeInterval = 3.0
 
@@ -232,6 +175,49 @@ struct FilesGridView: View {
                 .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
                 .opacity(configuration.isPressed ? 0.8 : 1.0)
                 .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+        }
+    }
+}
+
+// MARK: - Private
+
+private enum MediaType {
+    case videos
+    case images
+}
+
+private enum SectionBucket: CaseIterable {
+    case today, yesterday, last7, last14, last30, last365, other
+
+    var title: String {
+        switch self {
+        case .today:   return "Today"
+        case .yesterday: return "Yesterday"
+        case .last7:   return "Past 7 days"
+        case .last14:  return "Past 14 days"
+        case .last30:  return "Past Month"
+        case .last365: return "Past Year"
+        case .other: return "Very Old"
+        }
+    }
+    
+    static func bucket(for date: Date, now: Date = Date()) -> SectionBucket? {
+        let cal = Calendar.current
+        let startToday = cal.startOfDay(for: now)
+        let startYesterday = cal.date(byAdding: .day, value: -1, to: startToday)!
+        let start7 = cal.date(byAdding: .day, value: -7, to: startToday)!
+        let start14 = cal.date(byAdding: .day, value: -14, to: startToday)!
+        let start30 = cal.date(byAdding: .day, value: -30, to: startToday)!
+        let start365 = cal.date(byAdding: .day, value: -365, to: startToday)!
+
+        switch date {
+        case startToday...:                     return .today
+        case startYesterday..<startToday:       return .yesterday
+        case start7..<startYesterday:           return .last7
+        case start14..<start7:                  return .last14
+        case start30..<start14:                 return .last30
+        case start365..<start30:                return .last365
+        default:                                return .other
         }
     }
 }

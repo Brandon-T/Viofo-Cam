@@ -13,61 +13,6 @@ import VLCKit
 
 import SwiftUI
 
-class VLCPlayerObserver: ObservableObject {
-    private var cancellables = [NSObjectProtocol]()
-    
-    @Published
-    var position: Double = 0.0
-    
-    @Published
-    private(set) var duration: Double = 0
-    
-    @Published
-    private(set) var elapsedTime: Double = 0
-    
-    @Published
-    private(set) var remainingTime: Double = 0
-    
-    @Published
-    private(set) var isPlaying: Bool = false
-    
-    @Published
-    private(set) var isSeekable: Bool = false
-    
-    init(player: VLCMediaPlayer) {
-        // Setup observers
-        cancellables.append(player.observe(\.position, options: [.initial, .new]) { [weak self] player, change in
-            guard let self = self, let value = change.newValue else { return }
-            self.position = Double(value) / 1000.0
-        })
-        
-        cancellables.append(player.observe(\.time, options: [.initial, .new]) { [weak self] player, change in
-            guard let self = self, let value = change.newValue else { return }
-            self.elapsedTime = Double(value.intValue) / 1000.0
-        })
-        
-        cancellables.append(player.observe(\.remainingTime, options: [.initial, .new]) { [weak self] player, change in
-            guard let self = self, let value = change.newValue else { return }
-            self.remainingTime = Double(value?.intValue ?? 0) / 1000.0
-        })
-        
-        cancellables.append(player.observe(\.isPlaying, options: [.initial, .new]) { [weak self] player, change in
-            guard let self = self, let value = change.newValue else { return }
-            self.isPlaying = value
-        })
-        
-        cancellables.append(player.observe(\.isSeekable, options: [.initial, .new]) { [weak self] player, change in
-            guard let self = self, let value = change.newValue else { return }
-            self.isSeekable = value
-        })
-        
-        cancellables.append(player.observe(\.media, options: [.initial, .new]) { [weak self] player, change in
-            guard let self = self, let value = change.newValue else { return }
-            self.duration = Double(value?.length.intValue ?? 0) / 1000.0
-        })
-    }
-}
-
 class VLCPlayerModel: ObservableObject {
     let player: VLCMediaPlayer
     

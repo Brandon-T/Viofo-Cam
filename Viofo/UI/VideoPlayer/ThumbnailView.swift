@@ -12,11 +12,8 @@ import SwiftUI
 struct ThumbnailView: View {
     let file: CameraFile
     
-    @State
-    private var image: UIImage?
-    
-    @State
-    private var isLoading = false
+    @State private var image: UIImage?
+    @State private var isLoading = false
 
     var body: some View {
         ZStack {

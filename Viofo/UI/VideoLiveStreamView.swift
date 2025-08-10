@@ -15,35 +15,17 @@ import VLCKit
 #endif
 
 struct VideoLiveStreamView: View {
-    @State
-    private var isRecording = false
+    @State private var isRecording = false
+    @State private var statusMessage = ""
+    @State private var showControls = true
+    @State private var lastInteraction = Date()
+    @State private var showMenu = false
+    @State private var isFill = false
+    @State private var showFiles = false
+    @State private var containerSize: CGSize = .zero
     
-    @State
-    private var statusMessage = ""
-    
-    @State
-    private var showControls = true
-    
-    @State
-    private var lastInteraction = Date()
-    
-    @State
-    private var showMenu = false
-    
-    @State
-    private var isFill = false
-    
-    @State
-    private var showFiles = false
-    
-    @State
-    private var containerSize: CGSize = .zero
-    
-    @ObservedObject
-    private var playerModel = VLCPlayerModel(url: URL(string: "rtsp://\(Client.cameraIP)/live")!)
-    
-    @ObservedObject
-    private var filePlayerModel = VLCPlayerModel()
+    @ObservedObject private var playerModel = VLCPlayerModel(url: URL(string: "rtsp://\(Client.cameraIP)/live")!)
+    @ObservedObject private var filePlayerModel = VLCPlayerModel()
     
     private let autoHideDelay: TimeInterval = 3.0
     
