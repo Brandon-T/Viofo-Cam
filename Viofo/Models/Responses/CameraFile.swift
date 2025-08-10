@@ -8,12 +8,12 @@
 import Foundation
 
 struct CameraFile: Codable, Equatable, Hashable {
-    let name: String
-    let filePath: String
-    let size: Int64
-    let timeCode: Int64
-    let time: String
-    let attr: Int32
+    var name: String
+    var filePath: String
+    var size: Int64
+    var timeCode: Int64
+    var time: String
+    var attr: Int32
 
     enum CodingKeys: String, CodingKey {
         case name = "NAME"

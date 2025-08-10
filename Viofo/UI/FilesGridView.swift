@@ -14,6 +14,7 @@ struct FilesGridView: View {
     
     @State private var files = [CameraFile]()
     @State private var selectedFile: CameraFile?
+    @State private var editingFiles = Set<CameraFile>()
     
     @State private var isScrolling: Bool = false
     @State private var showControls = true
@@ -21,6 +22,7 @@ struct FilesGridView: View {
     @State private var isFill = false
     @State private var containerSize: CGSize = .zero
     @State private var selectedTab: MediaType = .videos
+    @State private var isEditing: Bool = false
     
     @StateObject var playerModel: VLCPlayerModel
     
@@ -32,59 +34,136 @@ struct FilesGridView: View {
             spacing: 16.0
         )
     ]
+    
+    private var filesForSelectedTab: [CameraFile] {
+        switch selectedTab {
+        case .videos:
+            return files.filter({ $0.isVideo })
+        case .images:
+            return files.filter({ $0.isImage })
+        }
+    }
+    
+    private var selectionCoversAll: Bool {
+        !filesForSelectedTab.isEmpty && editingFiles.count == filesForSelectedTab.count
+    }
 
     var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Text("Media").font(.headline)
-                Spacer()
-            }
-            .padding([.top, .horizontal], 16.0)
-            
-            Picker("Media Type", selection: $selectedTab) {
-                Text("Videos").tag(MediaType.videos)
-                Text("Images").tag(MediaType.images)
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 16.0)
-            
-            switch selectedTab {
-            case .videos:
-                gridView(files: files.filter({ $0.isVideo }))
-            case .images:
-                gridView(files: files.filter({ $0.isImage }))
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            // Fixes a huge animation delay issue when tapping the buttons
-            UIScrollView.appearance().delaysContentTouches = false
-        }
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 1.0)
-            .onChanged { _ in
-                isScrolling = true
-            }.onEnded { _ in
-                isScrolling = false
-            }
-        )
-        .fullScreenCover(isPresented: shouldShowPlayer) {
-            if let file = selectedFile, let url = file.fileURL {
-                if file.isImage {
-                    RemoteImageViewer(url: url)
-                } else {
-                    PlayerView(playerModel: playerModel, url: url)
+        NavigationStack {
+            VStack(spacing: 8) {
+                Picker("Media Type", selection: $selectedTab) {
+                    Text("Videos").tag(MediaType.videos)
+                    Text("Images").tag(MediaType.images)
                 }
-            } else {
-                Text("ERROR - The requested file could not be found")
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 16.0)
+                
+                gridView(files: filesForSelectedTab)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .onAppear {
+                // Fixes a huge animation delay issue when tapping the buttons
+                UIScrollView.appearance().delaysContentTouches = false
+            }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 1.0)
+                .onChanged { _ in
+                    isScrolling = true
+                }.onEnded { _ in
+                    isScrolling = false
+                }
+            )
+            .fullScreenCover(isPresented: shouldShowPlayer) {
+                if let file = selectedFile, let url = file.fileURL {
+                    if file.isImage {
+                        RemoteImageViewer(url: url)
+                    } else {
+                        PlayerView(playerModel: playerModel, url: url)
+                    }
+                } else {
+                    Text("ERROR - The requested file could not be found")
+                }
+            }
+            .navigationTitle("Media")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if isEditing {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            withAnimation(.snappy) {
+                                editingFiles.removeAll()
+                                isEditing = false
+                            }
+                        } label: {
+                            Text("Done")
+                        }
+                        .accessibilityLabel("Done")
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            withAnimation(.snappy) {
+                                let all = filesForSelectedTab
+                                if editingFiles.count == all.count {
+                                    editingFiles.removeAll()
+                                } else {
+                                    editingFiles = Set(all)
+                                }
+                            }
+                        } label: {
+                            Text(selectionCoversAll ? "Deselect All" : "Select All")
+                        }
+                        .accessibilityLabel(selectionCoversAll ? "Deselect All" : "Select All")
+                    }
+                     
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            Task { @MainActor in
+                                for file in editingFiles {
+                                    _ = try await Client.deleteOneFile(file.filePath)
+                                }
+                                
+                                isEditing = false
+                                editingFiles.removeAll()
+                                
+                                await refreshFiles()
+                            }
+                        } label: {
+                            Image(systemName: "trash")
+                                .imageScale(.medium)
+                        }
+                        .disabled(editingFiles.isEmpty)
+                        .opacity(editingFiles.isEmpty ? 0.4 : 1)
+                        .accessibilityLabel("Delete")
+                    }
+                } else {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            withAnimation(.snappy) {
+                                isEditing = true
+                            }
+                        } label: {
+                            Image(systemName: "square.and.pencil")
+                                .imageScale(.medium)
+                        }
+                        .accessibilityLabel("Edit")
+                    }
+                }
+            }
+            .task {
+                await refreshFiles()
             }
         }
-        .task {
-            let files = (try? await Client.getFileList()) ?? []
-            self.files = files.sorted(by: { a, b in
-                a.timeCode > b.timeCode
-            })
-        }
+        .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
+    }
+    
+    @MainActor
+    private func refreshFiles() async {
+        let files = (try? await Client.getFileList()) ?? []
+        self.files = files.sorted(by: { a, b in
+            a.timeCode > b.timeCode
+        })
     }
     
     private var shouldShowPlayer: Binding<Bool> {
@@ -134,8 +213,20 @@ struct FilesGridView: View {
     
     @ViewBuilder
     private func buttonView(file: CameraFile) -> some View {
+        let isSelected = editingFiles.contains(file)
+        
         Button {
-            selectedFile = file
+            withAnimation(.snappy) {
+                if isEditing {
+                    if isSelected {
+                        editingFiles.remove(file)
+                    } else {
+                        editingFiles.insert(file)
+                    }
+                } else {
+                    selectedFile = file
+                }
+            }
         } label: {
             VStack(spacing: 6.0) {
                 ZStack {
@@ -150,6 +241,19 @@ struct FilesGridView: View {
                             .font(.title)
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.5), radius: 2.0, y: 1.0)
+                    }
+                    
+                    // Selection tint overlay
+                    if isEditing {
+                        RoundedRectangle(cornerRadius: 12.0, style: .continuous)
+                            .fill(isSelected ? Color.accentColor.opacity(0.25) : .clear)
+                    }
+                }
+                .overlay(alignment: .topTrailing) {
+                    if isEditing {
+                        CheckmarkBadge(selected: isSelected)
+                            .padding(6.0)
+                            .transition(.scale.combined(with: .opacity))
                     }
                 }
                 
@@ -167,6 +271,17 @@ struct FilesGridView: View {
         }
         .buttonStyle(PlayButtonStyle())
         .disabled(isScrolling)
+        .onLongPressGesture(minimumDuration: 0.25) {
+            guard !isEditing else {
+                return
+            }
+            
+            withAnimation(.snappy) {
+                isEditing = true
+                editingFiles = [file]
+            }
+        }
+        .accessibilityAddTraits(isEditing && isSelected ? .isSelected : [])
     }
     
     struct PlayButtonStyle: ButtonStyle {
@@ -176,6 +291,28 @@ struct FilesGridView: View {
                 .opacity(configuration.isPressed ? 0.8 : 1.0)
                 .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
         }
+    }
+}
+
+private struct CheckmarkBadge: View {
+    let selected: Bool
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(selected ? Color.accentColor : Color.black.opacity(0.6))
+                .frame(width: 26, height: 26)
+                .shadow(radius: 1, y: 1)
+            
+            if selected {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.white)
+                    .scaleEffect(1.0)
+                    .opacity(0.95)
+            }
+        }
+        .accessibilityHidden(true)
     }
 }
 

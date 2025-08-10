@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct WifiData: Codable {
-    let ssid: String
-    let passphrase: String
+struct WifiData: Codable, Equatable, Hashable {
+    var ssid: String
+    var passphrase: String
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

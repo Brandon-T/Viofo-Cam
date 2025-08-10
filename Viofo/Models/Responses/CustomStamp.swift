@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct CustomStamp: Codable {
-    let stamp: String?
+struct CustomStamp: Codable, Equatable, Hashable {
+    var stamp: String?
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

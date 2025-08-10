@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct CarNumber: Codable {
-    let carNo: String?
+struct CarNumber: Codable, Equatable, Hashable {
+    var carNo: String?
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

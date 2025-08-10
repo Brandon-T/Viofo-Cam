@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct SwitchCameraResponse: Codable {
-    let cmd: Int
-    let status: Int
-    let value: Int64?
-    let string: String?
-    let interiorSensor: String?
-    let rearSensor: String?
+struct SwitchCameraResponse: Codable, Equatable, Hashable {
+    var cmd: Int
+    var status: Int
+    var value: Int64?
+    var string: String?
+    var interiorSensor: String?
+    var rearSensor: String?
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

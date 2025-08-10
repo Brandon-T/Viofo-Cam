@@ -7,16 +7,16 @@
 
 import Foundation
 
-struct CommonResponse: Codable {
-    let cmd: Int?
-    let status: Int
-    let value: Int64?
-    let string: String?
-    let otaFile: String?
-    let devStatus: String?
-    let error: String?
-    let totalNum: Int?
-    let curNum: Int?
+struct CommonResponse: Codable, Equatable, Hashable {
+    var cmd: Int?
+    var status: Int
+    var value: Int64?
+    var string: String?
+    var otaFile: String?
+    var devStatus: String?
+    var error: String?
+    var totalNum: Int?
+    var curNum: Int?
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct StreamUrlData: Codable {
-    let movieLiveViewLink: String
-    let photoLiveViewLink: String
+struct StreamUrlData: Codable, Equatable, Hashable {
+    var movieLiveViewLink: String
+    var photoLiveViewLink: String
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

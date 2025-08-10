@@ -22,8 +22,8 @@ class Command_A139: Command {
     override class var GET_CAR_NUMBER: Int { 8228 }
     override class var GET_CUSTOM_STAMP: Int { 8229 }
     override class var GPS: Int { 8208 }
-    override class var GPS_INFO_STAMP: Int { 8210 }
     class var GPS_SIGNAL: Int { 8058 }
+    override class var GPS_INFO_STAMP: Int { 8210 }
     class var HYBRID_PARKING_RECORDING: Int { 9341 }
     override class var INTERIOR_CAMERA_MIRROR: Int { 9219 }
     override class var INTERIOR_IMAGE_ROTATE: Int { 8225 }

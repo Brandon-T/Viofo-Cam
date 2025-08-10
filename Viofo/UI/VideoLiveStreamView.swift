@@ -24,6 +24,7 @@ struct VideoLiveStreamView: View {
     @State private var showFiles = false
     @State private var containerSize: CGSize = .zero
     
+    @ObservedObject private var eventListener: ViofoEventListener = .init()
     @ObservedObject private var playerModel = VLCPlayerModel(url: URL(string: "rtsp://\(Client.cameraIP)/live")!)
     @ObservedObject private var filePlayerModel = VLCPlayerModel()
     
@@ -91,11 +92,20 @@ struct VideoLiveStreamView: View {
                 )
             }
         }
-        .popover(isPresented: $showFiles) {
+        .sheet(isPresented: $showFiles) {
             FilesGridView(playerModel: filePlayerModel)
         }
-        .onAppear {
+        .task {
             startAutoHideTimer()
+
+            do {
+                let settings = try await Client.getAllSettingStatus()
+                if let recordingSetting = settings.first(where: { $0.cmd == Command.MOVIE_RECORD }) {
+                    isRecording = recordingSetting.status == 1
+                }
+            } catch {
+                print("ERROR")
+            }
         }
         .onTapGesture {
             showControls = true
@@ -105,6 +115,17 @@ struct VideoLiveStreamView: View {
             if isOpen {
                 showControls = true
                 lastInteraction = Date()
+            }
+        }
+        .onChange(of: eventListener.status) { value in
+            if value == 1 {
+                isRecording = true
+            } else if value == 2 {
+                isRecording = false
+            } else if value == 4 {
+                //microphone on
+            } else if value == 5 {
+                //microphone off
             }
         }
     }
@@ -205,28 +226,5 @@ struct VideoLiveStreamView: View {
             .foregroundColor(color)
             .clipShape(Capsule())
         }
-    }
-}
-
-struct FitOrFillScale: ViewModifier {
-    let isFill: Bool
-    let videoSize: CGSize
-    let containerSize: CGSize
-
-    func body(content: Content) -> some View {
-        guard isFill,
-              videoSize.width > 0, videoSize.height > 0,
-              containerSize.width > 0, containerSize.height > 0
-        else { return AnyView(content) }
-
-        let vAR = videoSize.width / videoSize.height
-        let cAR = containerSize.width / containerSize.height
-        let scale = max(cAR / vAR, vAR / cAR)
-
-        return AnyView(
-            content
-                .scaleEffect(scale, anchor: .center)
-                .clipped()
-        )
     }
 }

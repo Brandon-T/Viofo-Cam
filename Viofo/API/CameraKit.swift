@@ -88,39 +88,57 @@ extension Client {
         try await Client.sendCommandWithParam(Command.FORMAT_MEMORY, 1, as: CommonResponse.self)
     }
 
-    static func getAllSettingStatus() async throws -> [Int: String] {
+    static func getAllSettingStatus() async throws -> [SettingsResponse] {
         let data = try await Client.sendRequest(command: Command.GET_CURRENT_STATE)
         let root = try SimpleXML.parse(data)
-        if root.name == "Function" {
-            var i: Int = 0
-            var result = [Int: String]()
-            
-            for child in root.children {
-                if child.name == "Cmd" {
-                    i = Int(child.text) ?? 0
-                } else if child.name == "Status" {
-                    if (i == 8222 || i == 8220) {
-                        result[i] = child.text
-                    }
-                } else if child.name == "Start" {
-                    if i == Command.HDR_TIME {
-                        result[i] = child.text
-                    }
-                } else if child.name == "End" {
-                    if i == Command.HDR_TIME {
-                        if let value = result[i] {
-                            result[i] = "\(value)-\(child.text)"
-                        } else {
-                            result[i] = child.text
-                        }
-                    }
-                }
-            }
-            
-            return result
+        guard root.name == "Function" else {
+            return []
         }
         
-        return [:]
+        var results = [SettingsResponse]()
+        var currentCmd: Int?
+        var currentStatus: Int?
+        var currentString: String?
+        
+        for child in root.children {
+            if child.name == "Cmd" {
+                if let cmd = currentCmd, let status = currentStatus {
+                    results.append(SettingsResponse(cmd: cmd, status: status, string: currentString))
+                    currentString = nil
+                }
+                
+                currentCmd = Int(child.text)
+            } else if child.name == "Status" {
+                currentStatus = Int(child.text)
+            } else if child.name == "String" {
+                currentString = child.text
+            }
+            else if child.name == "Function" {
+                var nestedCmd: Int?
+                var nestedStatus: Int?
+                var nestedString: String?
+                
+                for nestedChild in child.children {
+                    if nestedChild.name == "Cmd" {
+                        nestedCmd = Int(nestedChild.text)
+                    } else if nestedChild.name == "Status" {
+                        nestedStatus = Int(nestedChild.text)
+                    } else if nestedChild.name == "String" {
+                        nestedString = nestedChild.text
+                    }
+                }
+                
+                if let cmd = nestedCmd, let status = nestedStatus {
+                    results.append(SettingsResponse(cmd: cmd, status: status, string: nestedString))
+                }
+            }
+        }
+        
+        if let cmd = currentCmd, let status = currentStatus {
+            results.append(SettingsResponse(cmd: cmd, status: status, string: currentString))
+        }
+        
+        return results
     }
 
     static func getHDRTimeCurrentValue() async throws -> String {

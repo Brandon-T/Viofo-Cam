@@ -70,12 +70,34 @@ struct Client {
         decodeAs type: T.Type
     ) async throws -> T {
         
-        let data = try await sendRequest(command: command, param: param, paramsMap: paramsMap, timeout: timeout)
+        let data = try await sendRequest(command: command, param: param, str: str, paramsMap: paramsMap, timeout: timeout)
 
         do {
             return try XMLDecoder().decode(T.self, from: data)
         } catch {
             throw CameraCommandError.parseError(error.localizedDescription)
         }
+    }
+}
+
+extension Client {
+    static func sendCommandWithParam<T: Decodable>(_ command: Int, _ param: Int, as type: T.Type) async throws -> T {
+        try await Client.sendRequest(command: command, param: param, decodeAs: type)
+    }
+
+    static func sendCommandWithStr<T: Decodable>(_ command: Int, _ str: String, as type: T.Type) async throws -> T {
+        try await Client.sendRequest(command: command, str: str, decodeAs: type)
+    }
+
+    static func sendCommandWithParamsMap<T: Decodable>(_ command: Int, _ params: [String: String], as type: T.Type) async throws -> T {
+        try await Client.sendRequest(command: command, paramsMap: params, decodeAs: type)
+    }
+
+    static func sendCommand<T: Decodable>(_ command: Int, as type: T.Type) async throws -> T {
+        try await Client.sendRequest(command: command, decodeAs: type)
+    }
+
+    static func sendCommand<T: Decodable>(_ command: Int, timeout: TimeInterval, as type: T.Type) async throws -> T {
+        try await Client.sendRequest(command: command, timeout: timeout, decodeAs: type)
     }
 }
