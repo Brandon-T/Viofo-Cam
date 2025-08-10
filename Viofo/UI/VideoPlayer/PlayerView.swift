@@ -186,6 +186,12 @@ private struct PlayerControls: View {
             model.player.jumpBackward(Int32(-seconds))
         }
     }
+    
+    /*private func skip(seconds: Double) {
+        let newPosition = observer.elapsedTime + seconds
+        let newPositionClamped = max(0, min(newPosition, observer.duration))
+        seek(toPosition: newPositionClamped / observer.duration)
+    }*/
 
     private func seek(toPosition pos: Double) {
         model.player.position = Float(pos)
