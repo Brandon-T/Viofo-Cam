@@ -1,5 +1,5 @@
 //
-//  ViofoLiveStreamView.swift
+//  VideoLiveStreamView.swift
 //  Viofo
 //
 //  Created by Brandon on 2025-08-05.
@@ -7,12 +7,14 @@
 
 import SwiftUI
 import AVKit
-import MobileVLCKit
 
-struct ViofoLiveStreamView: View {
-    @ObservedObject
-    private var model = VLCPlayerModel(url: URL(string: "rtsp://\(Client.cameraIP)/live")!)
-    
+#if canImport(MobileVLCKit)
+import MobileVLCKit
+#else
+import VLCKit
+#endif
+
+struct VideoLiveStreamView: View {
     @State
     private var isRecording = false
     
@@ -34,17 +36,21 @@ struct ViofoLiveStreamView: View {
     @State
     private var showFiles = false
     
-    @State private var containerSize: CGSize = .zero
-    private let autoHideDelay: TimeInterval = 3
-    
     @State
-    private var files = [CameraFiles.CameraFile]()
+    private var containerSize: CGSize = .zero
+    
+    @ObservedObject
+    private var playerModel = VLCPlayerModel(url: URL(string: "rtsp://\(Client.cameraIP)/live")!)
+    
+    @ObservedObject
+    private var filePlayerModel = VLCPlayerModel()
+    
+    private let autoHideDelay: TimeInterval = 3.0
     
     var body: some View {
         ZStack {
             Color.red.ignoresSafeArea()
-            playerView
-                .ignoresSafeArea()
+            playerView.ignoresSafeArea()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .topTrailing) {
@@ -104,14 +110,10 @@ struct ViofoLiveStreamView: View {
             }
         }
         .popover(isPresented: $showFiles) {
-            VideoGridPopover(files: files)
+            FilesGridView(playerModel: filePlayerModel)
         }
         .onAppear {
             startAutoHideTimer()
-            
-            Task { @MainActor in
-                self.files = try await Client.getFileList()
-            }
         }
         .onTapGesture {
             showControls = true
@@ -127,7 +129,7 @@ struct ViofoLiveStreamView: View {
     
     @ViewBuilder
     private var playerView: some View {
-        VLCPlayerView(model: model)
+        VLCPlayerView(model: playerModel)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .clipped()
             .onTapGesture {
@@ -135,14 +137,14 @@ struct ViofoLiveStreamView: View {
                 lastInteraction = Date()
             }
             .onAppear {
-                model.player.play();
+                playerModel.player.play();
             }
             .onGeometryChange(for: CGSize.self) {
                 $0.size
             } action: {
                 containerSize = $0;
             }
-            .modifier(FitOrFillScale(isFill: isFill, videoSize: model.player.videoSize, containerSize: containerSize))
+            .modifier(FitOrFillScale(isFill: isFill, videoSize: playerModel.player.videoSize, containerSize: containerSize))
     }
     
     private var overlayButtons: some View {

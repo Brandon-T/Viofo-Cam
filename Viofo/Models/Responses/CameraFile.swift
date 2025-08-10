@@ -7,26 +7,42 @@
 
 import Foundation
 
-struct CameraFiles: Decodable {
-    let files: [CameraFile]
-    
-    struct CameraFile: Codable {
-        let name: String
-        let filePath: String
-        let size: Int64
-        let timeCode: Int64
-        let time: String
-        let attr: Int32
+struct CameraFile: Codable, Equatable, Hashable {
+    let name: String
+    let filePath: String
+    let size: Int64
+    let timeCode: Int64
+    let time: String
+    let attr: Int32
 
-        enum CodingKeys: String, CodingKey {
-            case name = "NAME"
-            case filePath = "FPATH"
-            case size = "SIZE"
-            case timeCode = "TIMECODE"
-            case time = "TIME"
-            case attr = "ATTR"
-        }
+    enum CodingKeys: String, CodingKey {
+        case name = "NAME"
+        case filePath = "FPATH"
+        case size = "SIZE"
+        case timeCode = "TIMECODE"
+        case time = "TIME"
+        case attr = "ATTR"
     }
+    
+    var timeCodeDate: Date {
+        // VIOFO Dashcam EPOCH is from 2000/1/1 00:00:00 UTC.
+        let viofoEpoch = DateComponents(calendar: Calendar(identifier: .gregorian),
+                                        timeZone: TimeZone(secondsFromGMT: 0),
+                                        year: 2000, month: 1, day: 1).date!
+        
+        return viofoEpoch.addingTimeInterval(TimeInterval(timeCode))
+    }
+    
+    var timeCodeString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd HH:mm:ss"
+        formatter.timeZone = TimeZone.current
+        return formatter.string(from: timeCodeDate)
+    }
+}
+
+struct CameraFilesList: Decodable {
+    let files: [CameraFile]
 
     init(from decoder: Decoder) throws {
         struct AllFile: Decodable {
@@ -61,7 +77,7 @@ struct CameraFiles: Decodable {
     }
 }
 
-extension CameraFiles.CameraFile {
+extension CameraFile {
     private static let LOCKED_FILE = "RO"
     private static let MT_LOCKED_FILE = "evt_rec"
     private static let MT_MANUAL_LOCKED_FILE = "manual_rec"
@@ -108,6 +124,22 @@ extension CameraFiles.CameraFile {
     }
     
     var thumbFileName: String {
-        name + ".jpg"
+        return name + ".jpg"
+    }
+    
+    var isVideo: Bool {
+        if let fileURL = fileURL {
+            return ["mp4", "mpeg", "m4v", "mov", "mkv"].contains(fileURL.pathExtension.lowercased())
+        }
+        
+        return false
+    }
+    
+    var isImage: Bool {
+        if let fileURL = fileURL {
+            return ["jpg", "jpeg", "png", "heic", "gif"].contains(fileURL.pathExtension.lowercased())
+        }
+        
+        return false
     }
 }

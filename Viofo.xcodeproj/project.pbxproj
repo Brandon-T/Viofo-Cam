@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXCopyFilesBuildPhase section */
-		CA78924A2E46F7AE00C6A1F8 /* Embed Frameworks */ = {
+		CA8D5B742E47B44F00B700E6 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -29,6 +29,7 @@
 		CA7891D42E429B7F00C6A1F8 /* Exceptions for "Viofo" folder in "Viofo" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Frameworks/VLCKit.xcframework,
 				Info.plist,
 			);
 			target = CA7891B52E427F9700C6A1F8 /* Viofo */;
@@ -36,12 +37,12 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		CA78924B2E46F7AE00C6A1F8 /* Exceptions for "Viofo" folder in "Embed Frameworks" phase from "Viofo" target */ = {
+		CA8D5B752E47B44F00B700E6 /* Exceptions for "Viofo" folder in "Embed Frameworks" phase from "Viofo" target */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			attributesByRelativePath = {
 				Frameworks/MobileVLCKit.xcframework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
 			};
-			buildPhase = CA78924A2E46F7AE00C6A1F8 /* Embed Frameworks */;
+			buildPhase = CA8D5B742E47B44F00B700E6 /* Embed Frameworks */;
 			membershipExceptions = (
 				Frameworks/MobileVLCKit.xcframework,
 			);
@@ -53,7 +54,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				CA7891D42E429B7F00C6A1F8 /* Exceptions for "Viofo" folder in "Viofo" target */,
-				CA78924B2E46F7AE00C6A1F8 /* Exceptions for "Viofo" folder in "Embed Frameworks" phase from "Viofo" target */,
+				CA8D5B752E47B44F00B700E6 /* Exceptions for "Viofo" folder in "Embed Frameworks" phase from "Viofo" target */,
 			);
 			path = Viofo;
 			sourceTree = "<group>";
@@ -107,7 +108,7 @@
 				CA7891B22E427F9700C6A1F8 /* Sources */,
 				CA7891B32E427F9700C6A1F8 /* Frameworks */,
 				CA7891B42E427F9700C6A1F8 /* Resources */,
-				CA78924A2E46F7AE00C6A1F8 /* Embed Frameworks */,
+				CA8D5B742E47B44F00B700E6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

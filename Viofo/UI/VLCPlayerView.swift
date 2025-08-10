@@ -5,20 +5,76 @@
 //  Created by Brandon on 2025-08-05.
 //
 
+#if canImport(MobileVLCKit)
 import MobileVLCKit
+#else
+import VLCKit
+#endif
+
 import SwiftUI
+
+class VLCPlayerObserver: ObservableObject {
+    private var cancellables = [NSObjectProtocol]()
+    
+    @Published
+    var position: Double = 0.0
+    
+    @Published
+    private(set) var duration: Double = 0
+    
+    @Published
+    private(set) var elapsedTime: Double = 0
+    
+    @Published
+    private(set) var remainingTime: Double = 0
+    
+    @Published
+    private(set) var isPlaying: Bool = false
+    
+    @Published
+    private(set) var isSeekable: Bool = false
+    
+    init(player: VLCMediaPlayer) {
+        // Setup observers
+        cancellables.append(player.observe(\.position, options: [.initial, .new]) { [weak self] player, change in
+            guard let self = self, let value = change.newValue else { return }
+            self.position = Double(value) / 1000.0
+        })
+        
+        cancellables.append(player.observe(\.time, options: [.initial, .new]) { [weak self] player, change in
+            guard let self = self, let value = change.newValue else { return }
+            self.elapsedTime = Double(value.intValue) / 1000.0
+        })
+        
+        cancellables.append(player.observe(\.remainingTime, options: [.initial, .new]) { [weak self] player, change in
+            guard let self = self, let value = change.newValue else { return }
+            self.remainingTime = Double(value?.intValue ?? 0) / 1000.0
+        })
+        
+        cancellables.append(player.observe(\.isPlaying, options: [.initial, .new]) { [weak self] player, change in
+            guard let self = self, let value = change.newValue else { return }
+            self.isPlaying = value
+        })
+        
+        cancellables.append(player.observe(\.isSeekable, options: [.initial, .new]) { [weak self] player, change in
+            guard let self = self, let value = change.newValue else { return }
+            self.isSeekable = value
+        })
+        
+        cancellables.append(player.observe(\.media, options: [.initial, .new]) { [weak self] player, change in
+            guard let self = self, let value = change.newValue else { return }
+            self.duration = Double(value?.length.intValue ?? 0) / 1000.0
+        })
+    }
+}
 
 class VLCPlayerModel: ObservableObject {
     let player: VLCMediaPlayer
-    let playerView: UIView
     
-    init(url: URL) {
+    fileprivate let playerView: UIView
+    
+    init() {
         let player = VLCMediaPlayer()
-        player.media = VLCMedia(url: url)
-        player.media?.addOptions([
-            "rtsp-tcp": true
-        ])
-        
         self.player = player
         
         let view = UIView()
@@ -30,6 +86,20 @@ class VLCPlayerModel: ObservableObject {
         self.playerView = view
     }
     
+    convenience init(url: URL) {
+        self.init()
+        player.media = VLCMedia(url: url)
+    }
+    
+    func setMediaURL(_ url: URL?) {
+        if let url = url {
+            player.media = VLCMedia(url: url)
+        } else {
+            player.media = nil
+        }
+    }
+    
+    #if canImport(MobileVLCKit)
     func setFullScreen(enabled: Bool, containerSize: CGSize) {
         if enabled {
             let size = player.videoSize
@@ -97,6 +167,7 @@ class VLCPlayerModel: ObservableObject {
         defer { free(p) }
         return String(cString: p)
     }
+    #endif
 }
 
 struct VLCPlayerView: UIViewRepresentable {
@@ -124,6 +195,10 @@ struct VLCPlayerView: UIViewRepresentable {
         
         init(player: VLCMediaPlayer) {
             self.player = player
+        }
+        
+        func mediaPlayerTimeChanged(_ aNotification: Notification) {
+            
         }
         
         func mediaPlayerStateChanged(_ aNotification: Notification) {

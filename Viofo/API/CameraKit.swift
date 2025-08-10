@@ -183,8 +183,8 @@ extension Client {
         try await Client.sendCommand(Command.GET_WIFI_SSID_PASSWORD, as: WifiData.self)
     }
 
-    static func getFileList() async throws -> [CameraFiles.CameraFile] {
-        return try await Client.sendCommand(Command.GET_FILE_LIST, timeout: 100, as: CameraFiles.self).files
+    static func getFileList() async throws -> [CameraFile] {
+        return try await Client.sendCommand(Command.GET_FILE_LIST, timeout: 100, as: CameraFilesList.self).files
     }
 
     static func deleteOneFile(_ path: String) async throws -> CommonResponse {
