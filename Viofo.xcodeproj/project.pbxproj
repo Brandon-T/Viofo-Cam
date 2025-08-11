@@ -31,6 +31,7 @@
 			membershipExceptions = (
 				Frameworks/VLCKit.xcframework,
 				Info.plist,
+				Settings.json,
 			);
 			target = CA7891B52E427F9700C6A1F8 /* Viofo */;
 		};
@@ -47,6 +48,13 @@
 				Frameworks/MobileVLCKit.xcframework,
 			);
 		};
+		CA8D5BE32E49737E00B700E6 /* Exceptions for "Viofo" folder in "Compile Sources" phase from "Viofo" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = CA7891B22E427F9700C6A1F8 /* Sources */;
+			membershipExceptions = (
+				Settings.json,
+			);
+		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -54,6 +62,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				CA7891D42E429B7F00C6A1F8 /* Exceptions for "Viofo" folder in "Viofo" target */,
+				CA8D5BE32E49737E00B700E6 /* Exceptions for "Viofo" folder in "Compile Sources" phase from "Viofo" target */,
 				CA8D5B752E47B44F00B700E6 /* Exceptions for "Viofo" folder in "Embed Frameworks" phase from "Viofo" target */,
 			);
 			path = Viofo;

@@ -99,6 +99,8 @@ struct VideoLiveStreamView: View {
             startAutoHideTimer()
 
             do {
+                print(try await Client.getVoiceControlInfo())
+                
                 let settings = try await Client.getAllSettingStatus()
                 if let recordingSetting = settings.first(where: { $0.cmd == Command.MOVIE_RECORD }) {
                     isRecording = recordingSetting.status == 1

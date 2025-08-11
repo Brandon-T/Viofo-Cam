@@ -281,7 +281,13 @@ extension Client {
         try await sendSwitchCameraCommand(command)
     }
 
-    static func getVoiceControlInfo() async throws -> String {
-        try await Client.sendCommand(9228, as: String.self)
+    static func getVoiceControlInfo() async throws -> [VoiceControlInfoResponse] {
+        let data = try await Client.sendRequest(command: 9228)
+        let root = try SimpleXML.parse(data)
+        guard root.name == "LIST" else {
+            return []
+        }
+        
+        return root.children.map({ VoiceControlInfoResponse(key: $0.name, command: $0.text) })
     }
 }
