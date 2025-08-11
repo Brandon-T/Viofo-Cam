@@ -104,7 +104,8 @@ extension CameraFile {
             return nil
         }
         
-        return URL(string: Command.BASE_URL)!.appendingPathComponent(tail)
+        // Default is: Command.BASE_URL
+        return URL(string: "http://\(Client.cameraIP)")!.appendingPathComponent(tail)
     }
     
     var screenURL: URL? {

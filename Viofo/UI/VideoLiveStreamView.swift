@@ -99,6 +99,9 @@ struct VideoLiveStreamView: View {
             startAutoHideTimer()
 
             do {
+//                try await Client.startLiveView()
+//                try await Client.changeToPlayBackMode2()
+                
                 print(try await Client.getVoiceControlInfo())
                 
                 let settings = try await Client.getAllSettingStatus()
@@ -106,7 +109,7 @@ struct VideoLiveStreamView: View {
                     isRecording = recordingSetting.status == 1
                 }
             } catch {
-                print("ERROR")
+                print("ERROR: \(error)")
             }
         }
         .onTapGesture {
@@ -135,6 +138,7 @@ struct VideoLiveStreamView: View {
     @ViewBuilder
     private var playerView: some View {
         VLCPlayerView(model: playerModel)
+            .persistentSystemOverlays(.hidden)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .clipped()
             .onTapGesture {
@@ -183,7 +187,7 @@ struct VideoLiveStreamView: View {
             ) {
                 Task { @MainActor in
                     do {
-                        let statusMessage = try await Client.getGPSSignal()
+                        let statusMessage = try await Client.takeSnapshot()
                         print(statusMessage)
                     } catch {
                         statusMessage = "Error: \(error.localizedDescription)"

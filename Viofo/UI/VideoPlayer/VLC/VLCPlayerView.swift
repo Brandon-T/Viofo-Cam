@@ -34,6 +34,7 @@ class VLCPlayerModel: ObservableObject {
     convenience init(url: URL) {
         self.init()
         player.media = VLCMedia(url: url)
+        setMediaURL(url)
     }
     
     func setMediaURL(_ url: URL?) {
@@ -42,6 +43,15 @@ class VLCPlayerModel: ObservableObject {
         } else {
             player.media = nil
         }
+        
+        player.media?.addOptions([
+            "network-caching": 0,
+            "live-caching": 0,
+            "rtp-caching": 0,
+            "rtsp-caching": 0,
+            "realrtsp-caching": 0,
+            "rtsp-tcp": 0
+        ])
     }
     
     #if canImport(MobileVLCKit)

@@ -77,8 +77,10 @@ struct FilesGridView: View {
                 if let file = selectedFile, let url = file.fileURL {
                     if file.isImage {
                         RemoteImageViewer(url: url)
+                            .persistentSystemOverlays(.hidden)
                     } else {
                         PlayerView(playerModel: playerModel, url: url)
+                            .persistentSystemOverlays(.hidden)
                     }
                 } else {
                     Text("ERROR - The requested file could not be found")
