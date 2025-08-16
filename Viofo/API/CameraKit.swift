@@ -76,12 +76,12 @@ extension Client {
 
     static func queryManageSSDStorage() async throws -> CommonResponse {
         let params = ["str": "querry"] // sic: matches Java spelling
-        return try await Client.sendCommandWithParamsMap(Command_A339.MANAGE_SSD_STORAGE, params, as: CommonResponse.self)
+        return try await Client.sendCommandWithParamsMap(Command_A329.MANAGE_SSD_STORAGE, params, as: CommonResponse.self)
     }
 
     static func cancelManageSSDStorage() async throws -> CommonResponse {
         let params = ["str": "cancel"]
-        return try await Client.sendCommandWithParamsMap(Command_A339.MANAGE_SSD_STORAGE, params, as: CommonResponse.self)
+        return try await Client.sendCommandWithParamsMap(Command_A329.MANAGE_SSD_STORAGE, params, as: CommonResponse.self)
     }
 
     static func formatMemory() async throws -> CommonResponse {

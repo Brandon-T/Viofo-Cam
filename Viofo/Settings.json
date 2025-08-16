@@ -2,19 +2,20 @@
   "settings": [
     {
       "name": "Movie Resolution",
-      "command": "Command_A139.MOVIE_RESOLUTION",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_RESOLUTION",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the video recording resolution",
       "depends_on": {
-        "command": "Command_A229.FRONT_CAMERA_HDR",
+          "command": "FRONT_CAMERA_HDR",
+          "values": [1, 2],
       },
-      "options_if_hdr_off": [
+      "options": [
         { "display": "4K 60FPS", "value": "1,0" },
         { "display": "4K 21:9 60FPS", "value": "1,4" },
         { "display": "2K 60FPS", "value": "1,2" }
       ],
-      "options_if_hdr_on": [
+      "options_alt": [
         { "display": "4K 30FPS", "value": "1,1" },
         { "display": "4K 21:9 30FPS", "value": "1,5" },
         { "display": "2K 30FPS", "value": "1,3" }
@@ -22,8 +23,8 @@
     },
     {
       "name": "Loop Recording",
-      "command": "Command.MOVIE_CYCLIC_REC",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_CYCLIC_REC",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the duration of each video file before a new one is created.",
       "options": [
@@ -36,8 +37,8 @@
     },
     {
       "name": "Exposure Front Camera",
-      "command": "Command_A139.MOVIE_EXPOSURE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_EXPOSURE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Adjusts the exposure value for the front camera.",
       "options": [
@@ -58,8 +59,8 @@
     },
     {
       "name": "Exposure Front Telephoto",
-      "command": "Command_A139.MOVIE_EXPOSURE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_EXPOSURE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Adjusts the exposure value for the front telephoto camera.",
       "options": [
@@ -80,8 +81,8 @@
     },
     {
       "name": "Exposure Rear Camera",
-      "command": "Command_A139.MOVIE_EXPOSURE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_EXPOSURE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Adjusts the exposure value for the rear camera.",
       "options": [
@@ -102,8 +103,8 @@
     },
     {
       "name": "HDR",
-      "command": "Command_A229.FRONT_CAMERA_HDR",
-      "available": ["A229", "A339"],
+      "command": "FRONT_CAMERA_HDR",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Enables or disables High Dynamic Range (HDR) for the camera.",
       "options": [
@@ -114,8 +115,8 @@
     },
     {
       "name": "Auto HDR Time",
-      "command": "Command.HDR_TIME",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "HDR_TIME",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Format=HH:MM:SS-HH:MM:SS",
       "options": [
@@ -125,8 +126,8 @@
     },
     {
       "name": "G-Sensor",
-      "command": "Command.MOVIE_GSENSOR_SENS",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_GSENSOR_SENS",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the sensitivity of the G-sensor to detect sudden movements and lock the current video file.",
       "options": [
@@ -138,8 +139,8 @@
     },
     {
       "name": "Date Stamp",
-      "command": "Command.MOVIE_DATE_PRINT",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_DATE_PRINT",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles the date stamp overlay on recorded videos.",
       "options": [
@@ -149,8 +150,8 @@
     },
     {
       "name": "Stamp Text Colour",
-      "command": "Command.STAMP_COLOR",
-      "available": ["A339"],
+      "command": "STAMP_COLOR",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Sets the color of the text used for stamps on the video.",
       "options": [
@@ -162,8 +163,8 @@
     },
     {
       "name": "Bit-rate",
-      "command": "Command_A139.MOVIE_BITRATE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "MOVIE_BITRATE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the video recording quality and file size.",
       "options": [
@@ -175,8 +176,8 @@
     },
     {
       "name": "Time-lapse Recording",
-      "command": "Command_A139.TIME_LAPSE_RECORDING",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "TIME_LAPSE_RECORDING",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Configures the frames per second for time-lapse recording.",
       "options": [
@@ -190,8 +191,8 @@
     },
     {
       "name": "Time-Zone",
-      "command": "Command_A139.TIME_ZONE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "TIME_ZONE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the time zone for the device.",
       "options": [
@@ -233,8 +234,8 @@
     },
     {
       "name": "Time Format",
-      "command": "Command_A229.TIME_FORMAT",
-      "available": ["A229", "A339"],
+      "command": "TIME_FORMAT",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Sets the time display format.",
       "options": [
@@ -244,8 +245,8 @@
     },
     {
       "name": "Daylight Savings",
-      "command": "Command_A229.DAYLIGHT_SAVING",
-      "available": ["A229", "A339"],
+      "command": "DAYLIGHT_SAVING",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Enables or disables Daylight Savings Time.",
       "options": [
@@ -255,8 +256,8 @@
     },
     {
       "name": "Date Format",
-      "command": "Command_A139.DATE_FORMAT",
-      "available": ["A119", "A139", "A139Pro", "A229", "A339"],
+      "command": "DATE_FORMAT",
+      "available": ["A119", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the date display format on video stamps.",
       "options": [
@@ -267,22 +268,22 @@
     },
     {
       "name": "Set Time",
-      "command": "Command.SET_TIME",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "SET_TIME",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Format=HH:MM:SS"
     },
     {
       "name": "Set Date",
-      "command": "Command.SET_DATE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "SET_DATE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Format=YYYY-MM-DD"
     },
     {
       "name": "Boot Delay",
-      "command": "Command_A139.BOOT_DELAY",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "BOOT_DELAY",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets a delay for the camera to start recording after being powered on.",
       "options": [
@@ -293,8 +294,8 @@
     },
     {
       "name": "Front Tele Cam",
-      "command": "Command_A229.INTERIOR_CAMERA",
-      "available": ["A229", "A339"],
+      "command": "INTERIOR_CAMERA",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Controls the activation of the front telephoto camera.",
       "options": [
@@ -306,8 +307,8 @@
     },
     {
       "name": "LED Status in Normal Recording - Front Camera",
-      "command": "Command_A339.NORMAL_LED_CONTROL_FRONT",
-      "available": ["A339"],
+      "command": "NORMAL_LED_CONTROL_FRONT",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Controls the LED status on the front camera during normal recording.",
       "options": [
@@ -318,8 +319,8 @@
     },
     {
       "name": "LED Status in Normal Recording - Rear Camera",
-      "command": "Command_A339.NORMAL_LED_CONTROL_REAL",
-      "available": ["A339"],
+      "command": "NORMAL_LED_CONTROL_REAL",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Controls the LED status on the rear camera during normal recording.",
       "options": [
@@ -329,8 +330,8 @@
     },
     {
       "name": "LED Status in Normal Recording - Tele Camera",
-      "command": "Command_A339.NORMAL_LED_CONTROL_FRONT_TELE",
-      "available": ["A339"],
+      "command": "NORMAL_LED_CONTROL_FRONT_TELE",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Controls the LED status on the tele camera during normal recording.",
       "options": [
@@ -340,8 +341,8 @@
     },
     {
       "name": "LED Status in Parking Recording - Front Camera",
-      "command": "Command_A339.PARK_LED_CONTROL_FRONT",
-      "available": ["A339"],
+      "command": "PARK_LED_CONTROL_FRONT",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Controls the LED status on the front camera during parking recording.",
       "options": [
@@ -352,8 +353,8 @@
     },
     {
       "name": "LED Status in Parking Recording - Rear Camera",
-      "command": "Command_A339.PARK_LED_CONTROL_REAL",
-      "available": ["A339"],
+      "command": "PARK_LED_CONTROL_REAL",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Controls the LED status on the rear camera during parking recording.",
       "options": [
@@ -363,8 +364,8 @@
     },
     {
       "name": "LED Status in Parking Recording - Tele Camera",
-      "command": "Command_A339.PARK_LED_CONTROL_FRONT_TELE",
-      "available": ["A339"],
+      "command": "PARK_LED_CONTROL_FRONT_TELE",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Controls the LED status on the tele camera during parking recording.",
       "options": [
@@ -374,15 +375,15 @@
     },
     {
       "name": "Manage SSD Storage",
-      "command": "Command_A339.MANAGE_SSD_STORAGE",
-      "available": ["A339"],
+      "command": "MANAGE_SSD_STORAGE",
+      "available": ["A329"],
       "type": "string",
       "description": "Set SSD Storage options ('querry', 'Type&time=Y', or 'cancel')"
     },
     {
       "name": "Video Storage",
-      "command": "Command_A339.VIDEO_STORAGE",
-      "available": ["A339"],
+      "command": "VIDEO_STORAGE",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Selects the primary storage location for video files.",
       "options": [
@@ -392,8 +393,8 @@
     },
     {
       "name": "Parking Mode",
-      "command": "Command_A139.PARKING_MODE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "PARKING_MODE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Configures the camera's behavior when parked.",
       "options": [
@@ -410,8 +411,8 @@
     },
     {
       "name": "Vehicle Battery Protection Cut-Off Time",
-      "command": "Command_A139.PARKING_RECORDING_TIMER",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "PARKING_RECORDING_TIMER",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the duration after which the camera will shut off in parking mode to protect the vehicle's battery.",
       "options": [
@@ -430,8 +431,8 @@
     },
     {
       "name": "Query HK6 hardwire kit status",
-      "command": "Command.BATTERY_CUT_OFF_VOLTAGE",
-      "available": ["A339"],
+      "command": "BATTERY_CUT_OFF_VOLTAGE",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Query if HK6 hardwire kit is installed",
       "options": [
@@ -440,8 +441,8 @@
     },
     {
       "name": "Enter Parking Mode Timer",
-      "command": "Command_A119.ENTER_PARKING_MODE_TIMER",
-      "available": ["A119", "A129", "A139", "A139Pro", "A229", "A339"],
+      "command": "ENTER_PARKING_MODE_TIMER",
+      "available": ["A119", "A129", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets a timer for when the camera should enter parking mode after the engine is turned off.",
       "options": [
@@ -451,8 +452,8 @@
     },
     {
       "name": "Parking G-Sensor",
-      "command": "Command_A139.PARKING_G_SENSOR",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "PARKING_G_SENSOR",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the G-sensor sensitivity for detecting impacts while in parking mode.",
       "options": [
@@ -463,8 +464,8 @@
     },
     {
       "name": "Parking Motion Detection",
-      "command": "Command_A139.PARKING_MOTION_DETECTION",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "PARKING_MOTION_DETECTION",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the motion detection sensitivity for parking mode.",
       "options": [
@@ -475,8 +476,8 @@
     },
     {
       "name": "Parking GPS",
-      "command": "Command_A229.PARKING_GPS",
-      "available": ["A229", "A339"],
+      "command": "PARKING_GPS",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Enables or disables GPS functionality in parking mode.",
       "options": [
@@ -486,8 +487,8 @@
     },
     {
       "name": "Parking HDR",
-      "command": "Command_A229.PARKING_HDR",
-      "available": ["A229", "A339"],
+      "command": "PARKING_HDR",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Enables or disables HDR in parking mode.",
       "options": [
@@ -497,8 +498,8 @@
     },
     {
       "name": "Rear Image Rotate",
-      "command": "Command_A139.REAR_IMAGE_ROTATE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "REAR_IMAGE_ROTATE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles image rotation for the rear camera.",
       "options": [
@@ -508,8 +509,8 @@
     },
     {
       "name": "Rear Image Mirror",
-      "command": "Command_A139.REAR_CAMERA_MIRROR",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "REAR_CAMERA_MIRROR",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles image mirroring for the rear camera.",
       "options": [
@@ -519,8 +520,8 @@
     },
     {
       "name": "Front Telephoto Image Rotate",
-      "command": "Command_A139.INTERIOR_IMAGE_ROTATE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "INTERIOR_IMAGE_ROTATE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles image rotation for the front telephoto camera.",
       "options": [
@@ -530,8 +531,8 @@
     },
     {
       "name": "Front Telephoto Image Mirror",
-      "command": "Command_A139.INTERIOR_CAMERA_MIRROR",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "INTERIOR_CAMERA_MIRROR",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles image mirroring for the front telephoto camera.",
       "options": [
@@ -541,8 +542,8 @@
     },
     {
       "name": "Notification Sounds",
-      "command": "Command_A139.BEEP_SOUND",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "BEEP_SOUND",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Controls the types of notification sounds the camera makes.",
       "options": [
@@ -554,8 +555,8 @@
     },
     {
       "name": "Voice Notifications",
-      "command": "Command_A139.VOICE_NOTIFICATION",
-      "available": ["A119", "A139", "A139Pro", "A229", "A339"],
+      "command": "VOICE_NOTIFICATION",
+      "available": ["A119", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles voice notifications from the camera.",
       "options": [
@@ -565,8 +566,8 @@
     },
     {
       "name": "Voice Control",
-      "command": "Command_A119.VOICE_CONTROL",
-      "available": ["A119", "A139", "A139Pro", "A229", "A339"],
+      "command": "VOICE_CONTROL",
+      "available": ["A119", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Enables or disables voice control for the camera.",
       "options": [
@@ -576,8 +577,8 @@
     },
     {
       "name": "List Voice Commands",
-      "command": "Command.GET_WIFI_SSID_PASSWORD",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "GET_WIFI_SSID_PASSWORD",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "This is a query command to get the list of voice commands.",
       "options": [
@@ -586,16 +587,16 @@
     },
     {
       "name": "Live Video Source",
-      "command": "Command.LIVE_VIDEO_SOURCE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "LIVE_VIDEO_SOURCE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "This is a query command to get the video source.",
       "options": []
     },
     {
       "name": "Privacy Mode",
-      "command": "Command.PRIVACY_MODE",
-      "available": ["A339"],
+      "command": "PRIVACY_MODE",
+      "available": ["A329"],
       "type": "parameter",
       "description": "Toggles the privacy mode, which may disable certain functions.",
       "options": [
@@ -605,8 +606,8 @@
     },
     {
       "name": "GPS",
-      "command": "Command_A139.GPS",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "GPS",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Enables or disables the GPS module.",
       "options": [
@@ -616,8 +617,8 @@
     },
     {
       "name": "Speed Unit",
-      "command": "Command_A139.SPEED_UNIT",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "SPEED_UNIT",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the speed unit for display on video stamps.",
       "options": [
@@ -627,8 +628,8 @@
     },
     {
       "name": "GPS Info Stamp",
-      "command": "Command_A139.GPS_INFO_STAMP",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "GPS_INFO_STAMP",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Configures the GPS information to be stamped on the video.",
       "options": [
@@ -640,8 +641,8 @@
     },
     {
       "name": "Camera Model Stamp",
-      "command": "Command_A139.CAMERA_MODEL_STAMP",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "CAMERA_MODEL_STAMP",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles the camera model stamp on recorded videos.",
       "options": [
@@ -651,8 +652,8 @@
     },
     {
       "name": "Logo Stamp",
-      "command": "Command.LOGO_STAMP",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "LOGO_STAMP",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Toggles the logo stamp on recorded videos.",
       "options": [
@@ -662,8 +663,8 @@
     },
     {
       "name": "Resolution Stamp",
-      "command": "Command_A229.HDR_STAMP",
-      "available": ["A229", "A339"],
+      "command": "HDR_STAMP",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Toggles the resolution stamp on recorded videos.",
       "options": [
@@ -673,8 +674,8 @@
     },
     {
       "name": "Screen Saver",
-      "command": "Command.SCREEN_SAVER",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "SCREEN_SAVER",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the time delay before the screen saver activates.",
       "options": [
@@ -687,8 +688,8 @@
     },
     {
       "name": "Frequency",
-      "command": "Command.FREQUENCY",
-      "available": ["A119", "A139", "A139Pro", "A229", "A339"],
+      "command": "FREQUENCY",
+      "available": ["A119", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the power frequency to reduce flickering in video.",
       "options": [
@@ -698,8 +699,8 @@
     },
     {
       "name": "Language",
-      "command": "Command.LANGUAGE",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "LANGUAGE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the language for the camera's menu and voice notifications.",
       "options": [
@@ -724,8 +725,8 @@
     },
     {
       "name": "Notification Volume",
-      "command": "Command.VOICE_NOTIFICATION_VOLUME",
-      "available": ["A119", "A139", "A139Pro", "A229", "A339"],
+      "command": "VOICE_NOTIFICATION_VOLUME",
+      "available": ["A119", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the volume level for voice notifications and beeps.",
       "options": [
@@ -736,8 +737,8 @@
     },
     {
       "name": "Format Reminder",
-      "command": "Command_A229.FORMAT_REMINDER",
-      "available": ["A229", "A339"],
+      "command": "FORMAT_REMINDER",
+      "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Sets a reminder to format the memory card at a specified interval.",
       "options": [
@@ -749,8 +750,8 @@
     },
     {
       "name": "Bluetooth Button (Microphone Button)",
-      "command": "Command_A139.BLUETOOTH_MIC_BUTTON",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "BLUETOOTH_MIC_BUTTON",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Assigns a function to the Bluetooth Microphone button.",
       "options": [
@@ -765,8 +766,8 @@
     },
     {
       "name": "Bluetooth Button (Action Button)",
-      "command": "Command_A139.BLUETOOTH_ACTION_BUTTON",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "BLUETOOTH_ACTION_BUTTON",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Assigns a function to the Bluetooth Action button.",
       "options": [
@@ -781,8 +782,8 @@
     },
     {
       "name": "Wi-Fi Channel",
-      "command": "Command_A119.WIFI_CHANNEL",
-      "available": ["A119", "A139", "A139Pro", "A229", "A339"],
+      "command": "WIFI_CHANNEL",
+      "available": ["A119", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Sets the Wi-Fi channel (2.4GHz, 5GHz) to use.",
       "options": [
@@ -793,43 +794,43 @@
     },
     {
       "name": "Wi-Fi Name (SSID)",
-      "command": "Command.WIFI_NAME",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "WIFI_NAME",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Set Wi-Fi SSID"
     },
     {
       "name": "Wi-Fi Password",
-      "command": "Command.WIFI_PWD",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "WIFI_PWD",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Set Wi-Fi Password"
     },
     {
       "name": "Wi-Fi Station Configuration",
-      "command": "Command.WIFI_STATION_CONFIGURATION",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "WIFI_STATION_CONFIGURATION",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Set Wi-Fi Station SSID & PASSWORD"
     },
     {
       "name": "Custom Text Stamp",
-      "command": "Command_A139.CUSTOM_TEXT_STAMP",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "CUSTOM_TEXT_STAMP",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Set Custom Text Stamp"
     },
     {
       "name": "Car License Number Stamp",
-      "command": "Command_A139.CAR_NUMBER",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "CAR_NUMBER",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
       "description": "Set Car License Number Stamp"
     },
     {
       "name": "Factory Reset",
-      "command": "Command.RESET_SETTING",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "RESET_SETTING",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Resets the camera to factory default settings.",
       "options": [
@@ -838,8 +839,9 @@
     },
     {
       "name": "Restart Camera",
-      "command": "Command_A129.RESTART_CAMERA",
-      "available": ["A119", "A129", "A139", "A139Pro", "A229", "A339"],
+      "command": "RESTART_CAMERA",
+      "command": "RESTART_CAMERA",
+      "available": ["A119", "A129", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Restarts the camera.",
       "options": [
@@ -848,8 +850,8 @@
     },
     {
       "name": "Firmware Version",
-      "command": "Command.FIRMWARE_VERSION",
-      "available": ["A139", "A139Pro", "A229", "A339"],
+      "command": "FIRMWARE_VERSION",
+      "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "Retrieves the current firmware version of the camera.",
       "options": [

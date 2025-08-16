@@ -8,7 +8,7 @@
 import Foundation
 
 struct Client {
-    static let cameraIP: String = Command.DEFAULT_IP
+    static let cameraIP: String = "10.0.0.125" //Command.DEFAULT_IP
     
     private static let baseCommandURL = "http://\(Self.cameraIP)/?custom=1&cmd="
     private static let addParam = "&par="

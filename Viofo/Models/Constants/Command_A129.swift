@@ -5,6 +5,9 @@
 //  Created by Brandon on 2025-08-10.
 //
 
+import CommandMacros
+
+@GenerateCommandIndex
 class Command_A129: Command {
     override class var BEEP_SOUND: Int { 9403 }
     override class var ENTER_PARKING_MODE_TIMER: Int { 9435 }
@@ -25,4 +28,20 @@ class Command_A129: Command {
     class var FIRMWARE_URL_A129PRO_IR: String { "https://www.viofo.com/download/firmware/A129PIR/filedesc.xml" }
     override class var IMAGE_ROTATE: Int { 9413 }
     override class var RESTART_CAMERA: Int { 9423 }
+    
+    // MARK: - Firmware >= 1.9:
+    override class var MOVIE_WDR: Int { 2026 }
+    
+    // MARK: - Firmware >= 2.0:
+    override class var WIFI_STATION_CONFIGURATION: Int { 3032 }
+    
+    // MARK: - Firmware >= 2.5:
+    override class var BLUETOOTH_ACTION_BUTTON: Int { 9466 }
+    override class var BLUETOOTH_MIC_BUTTON: Int { 9465 }
+    
+    // MARK: - Firmware -> IR
+    override class var IR_LED: Int { 9218 }
+    
+    // MARK: - Firmware -> Pro_W
+    override class var WIFI_STATION_CONFIGURATION: { 3032 }
 }

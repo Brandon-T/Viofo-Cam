@@ -5,6 +5,9 @@
 //  Created by Brandon on 2025-08-10.
 //
 
+import CommandMacros
+
+@GenerateCommandIndex
 class Command_A119: Command {
     override class var BEEP_SOUND: Int { 9403 }
     override class var DATE_FORMAT: Int { 9416 }
@@ -20,4 +23,10 @@ class Command_A119: Command {
     override class var VOICE_NOTIFICATION: Int { 9449 }
     override class var VOICE_NOTIFICATION_VOLUME: Int { 9447 }
     override class var WIFI_CHANNEL: Int { 9448 }
+    
+    // MARK: - Firmware -> IR
+    override class var IR_LED: Int { 9218 }
+    
+    // MARK: - Firmware -> Mini2
+    override class var WIFI_STATION_CONFIGURATION: Int { 3032 }
 }

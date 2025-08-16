@@ -22,6 +22,7 @@ struct VideoLiveStreamView: View {
     @State private var showMenu = false
     @State private var isFill = false
     @State private var showFiles = false
+    @State private var showSettings = false
     @State private var containerSize: CGSize = .zero
     
     @State private var liveStreamURL: URL?
@@ -84,6 +85,11 @@ struct VideoLiveStreamView: View {
                         Button("View Files", role: .destructive) {
                             showFiles = true
                         }
+                        
+                        Button("Settings") {
+                            showSettings = true
+                        }
+                        
                         Button("Cancel", role: .cancel) {}
                     }
                 }
@@ -96,6 +102,9 @@ struct VideoLiveStreamView: View {
         }
         .sheet(isPresented: $showFiles) {
             FilesGridView(playerModel: filePlayerModel)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
         .task {
             startAutoHideTimer()

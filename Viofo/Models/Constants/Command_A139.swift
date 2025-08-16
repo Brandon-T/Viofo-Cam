@@ -5,6 +5,9 @@
 //  Created by Brandon on 2025-08-08.
 //
 
+import CommandMacros
+
+@GenerateCommandIndex
 class Command_A139: Command {
     override class var BEEP_SOUND: Int { 8214 }
     override class var BLUETOOTH_ACTION_BUTTON: Int { 9314 }
@@ -32,7 +35,10 @@ class Command_A139: Command {
     class var LED_STATUS_IN_PARKING_RECORD: Int { 9226 }
     override class var LIVE_VIDEO_SOURCE: Int { 8202 }
     override class var MICROPHONE: Int { 8221 }
+    override class var MOTION_DET: Int { 0 }
     override class var MOVIE_BITRATE: Int { 8200 }
+    override class var MOVIE_EV_INTERIOR: Int { 8220 }
+    override class var MOVIE_EV_REAR: Int { 8220 }
     override class var MOVIE_EXPOSURE: Int { 8220 }
     override class var MOVIE_RESOLUTION: Int { 8222 }
     override class var PARKING_G_SENSOR: Int { 8204 }
@@ -47,4 +53,10 @@ class Command_A139: Command {
     override class var TIME_ZONE: Int { 8212 }
     override class var VOICE_NOTIFICATION: Int { 9221 }
     override class var WIFI_CHANNEL: Int { 8201 }
+    
+    // MARK: - Firmware >= 1.5 || Pro
+    override class var WIFI_STATION_CONFIGURATION: Int { 3032 }
+    
+    // MARK: - Firmware >= 1.5
+    override class var PARKING_RECORDING_GEOFENCING: Int { 8234 }  // 0 otherwise
 }

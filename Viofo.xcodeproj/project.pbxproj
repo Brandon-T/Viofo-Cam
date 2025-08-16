@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CA6FDE662E51093600067AD4 /* CommandMacros in Frameworks */ = {isa = PBXBuildFile; productRef = CA6FDE652E51093600067AD4 /* CommandMacros */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		CA8D5B742E47B44F00B700E6 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -31,7 +35,6 @@
 			membershipExceptions = (
 				Frameworks/VLCKit.xcframework,
 				Info.plist,
-				Settings.json,
 			);
 			target = CA7891B52E427F9700C6A1F8 /* Viofo */;
 		};
@@ -75,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA6FDE662E51093600067AD4 /* CommandMacros in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +132,7 @@
 			);
 			name = Viofo;
 			packageProductDependencies = (
+				CA6FDE652E51093600067AD4 /* CommandMacros */,
 			);
 			productName = Viofo;
 			productReference = CA7891B62E427F9700C6A1F8 /* Viofo.app */;
@@ -158,6 +163,7 @@
 			mainGroup = CA7891AD2E427F9700C6A1F8;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				CA6FDE642E51093600067AD4 /* XCLocalSwiftPackageReference "Viofo/Macros/CommandMacros" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CA7891B72E427F9700C6A1F8 /* Products */;
@@ -320,6 +326,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = PVNDH8GA5R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Viofo/Info.plist;
@@ -356,6 +363,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = PVNDH8GA5R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Viofo/Info.plist;
@@ -403,6 +411,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		CA6FDE642E51093600067AD4 /* XCLocalSwiftPackageReference "Viofo/Macros/CommandMacros" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Viofo/Macros/CommandMacros;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CA6FDE652E51093600067AD4 /* CommandMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommandMacros;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CA7891AE2E427F9700C6A1F8 /* Project object */;
 }

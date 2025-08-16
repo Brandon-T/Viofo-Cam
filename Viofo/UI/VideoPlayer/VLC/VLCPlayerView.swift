@@ -57,13 +57,13 @@ class VLCPlayerModel: ObservableObject {
         ])
         
         player.media?.addOptions([
-                    "network-caching": 500,
-                    "sout-rtp-caching": 100,
-                    ":rtp-timeout": 10000,
-                    ":rtsp-tcp": true,
-                    ":rtsp-frame-buffer-size": 1024,
-                    ":rtsp-caching": 0,
-                    ":live-caching": 0,
+            "network-caching": 500,
+            "sout-rtp-caching": 100,
+            ":rtp-timeout": 10000,
+            ":rtsp-tcp": true,
+            ":rtsp-frame-buffer-size": 1024 * 1024,
+            ":rtsp-caching": 0,
+            ":live-caching": 0,
         ])
         
         player.media?.addOption(":codec=avcodec")

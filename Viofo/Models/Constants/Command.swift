@@ -5,6 +5,9 @@
 //  Created by Brandon on 2025-08-08.
 //
 
+import CommandMacros
+
+@GenerateCommandIndex
 class Command {
     class var AUTO_POWER_OFF: Int { 3007 }
     class var BASE_URL: String { "http://192.168.1.254" }
@@ -133,4 +136,8 @@ class Command {
     class var WIFI_NAME: Int { 3003 }
     class var WIFI_PWD: Int { 3004 }
     class var WIFI_STATION_CONFIGURATION: Int { 3032 }
+}
+
+extension Command: CommandIndexProvider {
+    
 }
