@@ -16,6 +16,12 @@ import SwiftUI
 class VLCPlayerModel: ObservableObject {
     let player: VLCMediaPlayer
     
+    @Published
+    fileprivate(set) var isLoading: Bool = false
+    
+    @Published
+    fileprivate(set) var isRendering: Bool = false
+    
     fileprivate let playerView: UIView
     
     init() {
@@ -47,11 +53,28 @@ class VLCPlayerModel: ObservableObject {
         player.media?.addOptions([
             "network-caching": 0,
             "live-caching": 0,
-            "rtp-caching": 0,
-            "rtsp-caching": 0,
-            "realrtsp-caching": 0,
-            "rtsp-tcp": 0
+            "rtsp-tcp": true
         ])
+        
+        player.media?.addOptions([
+                    "network-caching": 500,
+                    "sout-rtp-caching": 100,
+                    ":rtp-timeout": 10000,
+                    ":rtsp-tcp": true,
+                    ":rtsp-frame-buffer-size": 1024,
+                    ":rtsp-caching": 0,
+                    ":live-caching": 0,
+        ])
+        
+        player.media?.addOption(":codec=avcodec")
+        player.media?.addOption(":vcodec=h264")
+        player.media?.addOption("--file-caching=2000")
+        player.media?.addOption("clock-jitter=0")
+        player.media?.addOption("--rtsp-tcp")
+        player.media?.clearStoredCookies()
+        
+        player.audio?.isMuted = false  // TODO.
+
     }
     
     #if canImport(MobileVLCKit)
@@ -142,33 +165,62 @@ struct VLCPlayerView: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator(player: model.player)
+        return Coordinator(model: model)
     }
     
     class Coordinator: NSObject, VLCMediaPlayerDelegate {
-        let player: VLCMediaPlayer
+        private weak var model: VLCPlayerModel?
+        private var lastPTS: VLCTime?
+        private var lastAdvanceAt = Date.distantPast
         
-        init(player: VLCMediaPlayer) {
-            self.player = player
+        init(model: VLCPlayerModel) {
+            self.model = model
         }
         
-        func mediaPlayerTimeChanged(_ aNotification: Notification) {
+        func mediaPlayerTimeChanged(_ note: Notification) {
+            guard let model = model else { return }
+            let player = model.player
             
+            if let last = lastPTS, player.time.intValue > last.intValue {
+                model.isRendering = true
+                lastAdvanceAt = Date()
+            } else {
+                // If we're "playing" but time hasn't advanced for a bit, we're stalled
+                if player.state == .playing && Date().timeIntervalSince(lastAdvanceAt) > 1.0 {
+                    model.isRendering = false
+                }
+            }
+            
+            lastPTS = player.time
         }
         
         func mediaPlayerStateChanged(_ aNotification: Notification) {
+            guard let model = model else { return }
+            let player = model.player
+            
             switch player.state {
-            case .error:
-                print("❌ VLC player encountered an error.")
-            case .stopped:
-                print("✅ VLC stream ended.")
+            case .opening, .buffering:
+                model.isLoading = true
+                model.isRendering = false
                 
-                player.stop()
-                player.play()
-            case .buffering:
-                print("⌛ VLC is buffering...")
             case .playing:
-                print("▶️ VLC is playing.")
+                model.isLoading = false
+                
+            case .paused:
+                model.isLoading = false
+                model.isRendering = false
+                
+            case .stopped, .ended, .error:
+                model.isLoading = false
+                model.isRendering = false
+                lastPTS = nil
+                lastAdvanceAt = .distantPast
+                
+                Task { @MainActor [weak model] in
+                    try await Task.sleep(for: .milliseconds(2000))
+                    model?.player.play()
+                }
+                
             default:
                 break
             }

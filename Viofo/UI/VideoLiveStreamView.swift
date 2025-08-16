@@ -24,8 +24,10 @@ struct VideoLiveStreamView: View {
     @State private var showFiles = false
     @State private var containerSize: CGSize = .zero
     
+    @State private var liveStreamURL: URL?
     @ObservedObject private var eventListener: ViofoEventListener = .init()
-    @ObservedObject private var playerModel = VLCPlayerModel(url: URL(string: "rtsp://\(Client.cameraIP)/live")!)
+    @ObservedObject private var heartbeatModel = HeartbeatModel()
+    @ObservedObject private var playerModel = VLCPlayerModel()
     @ObservedObject private var filePlayerModel = VLCPlayerModel()
     
     private let autoHideDelay: TimeInterval = 3.0
@@ -97,8 +99,12 @@ struct VideoLiveStreamView: View {
         }
         .task {
             startAutoHideTimer()
+            heartbeatModel.start()
 
             do {
+                let streamData = try await Client.getLiveViewUrl()
+                liveStreamURL = URL(string: streamData.movieLiveViewLink.replacingOccurrences(of: "/xxx", with: "\(Client.cameraIP)/xxx"))
+                
 //                try await Client.startLiveView()
 //                try await Client.changeToPlayBackMode2()
                 
@@ -133,6 +139,9 @@ struct VideoLiveStreamView: View {
                 //microphone off
             }
         }
+        .onChange(of: heartbeatModel.status) {
+            print("Heartbeat: \($0)")
+        }
     }
     
     @ViewBuilder
@@ -145,7 +154,8 @@ struct VideoLiveStreamView: View {
                 showControls.toggle();
                 lastInteraction = Date()
             }
-            .onAppear {
+            .onChange(of: liveStreamURL) {
+                playerModel.setMediaURL($0)
                 playerModel.player.play();
             }
             .onGeometryChange(for: CGSize.self) {
@@ -154,6 +164,14 @@ struct VideoLiveStreamView: View {
                 containerSize = $0;
             }
             .modifier(FitOrFillScale(isFill: isFill, videoSize: playerModel.player.videoSize, containerSize: containerSize))
+            .overlay {
+                if !playerModel.isRendering {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .controlSize(.large)
+                        .tint(Color.white)
+                }
+            }
     }
     
     private var overlayButtons: some View {
