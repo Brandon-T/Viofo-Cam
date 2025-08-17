@@ -24,6 +24,9 @@ class VLCPlayerObserver: ObservableObject {
     @Published var elapsedTime: Double = 0.0
     @Published var remainingTime: Double = 0.0
     
+    @Published fileprivate(set) var isLoading: Bool = false
+    @Published fileprivate(set) var isRendering: Bool = false
+    
     private var cancellables = Set<AnyCancellable>()
     private var timer: Timer?
 
@@ -80,4 +83,60 @@ class VLCPlayerObserver: ObservableObject {
         self.elapsedTime = Double(self.player.time.intValue) / 1000.0
         self.remainingTime = self.duration - self.elapsedTime
     }
+}
+
+private class StallDetection: ObservableObject {
+    private weak var player: VLCMediaPlayer?
+    private var lastPTS: VLCTime?
+    private var lastAdvanceAt = Date.distantPast
+    
+    init(player: VLCMediaPlayer) {
+        self.player = player
+    }
+    
+//    func update() {
+//        if let last = lastPTS, player.time.intValue > last.intValue {
+//            model.isRendering = true
+//            lastAdvanceAt = Date()
+//        } else {
+//            // If we're "playing" but time hasn't advanced for a bit, we're stalled
+//            if player.state == .playing && Date().timeIntervalSince(lastAdvanceAt) > 1.0 {
+//                model.isRendering = false
+//            }
+//        }
+//        
+//        lastPTS = player.time
+//    }
+//    
+//    func mediaPlayerStateChanged(_ aNotification: Notification) {
+//        guard let model = model else { return }
+//        let player = model.player
+//        
+//        switch player.state {
+//        case .opening, .buffering:
+//            model.isLoading = true
+//            model.isRendering = false
+//            
+//        case .playing:
+//            model.isLoading = false
+//            
+//        case .paused:
+//            model.isLoading = false
+//            model.isRendering = false
+//            
+//        case .stopped, .ended, .error:
+//            model.isLoading = false
+//            model.isRendering = false
+//            lastPTS = nil
+//            lastAdvanceAt = .distantPast
+//            
+//            Task { @MainActor [weak model] in
+//                try await Task.sleep(for: .milliseconds(2000))
+//                model?.player.play()
+//            }
+//            
+//        default:
+//            break
+//        }
+//    }
 }

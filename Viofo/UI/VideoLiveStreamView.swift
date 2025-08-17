@@ -15,6 +15,7 @@ import VLCKit
 #endif
 
 struct VideoLiveStreamView: View {
+    @State private var isMicrophone = false
     @State private var isRecording = false
     @State private var statusMessage = ""
     @State private var showControls = true
@@ -24,6 +25,7 @@ struct VideoLiveStreamView: View {
     @State private var showFiles = false
     @State private var showSettings = false
     @State private var containerSize: CGSize = .zero
+    @Namespace private var controlsNamespace
     
     @State private var liveStreamURL: URL?
     @ObservedObject private var eventListener: ViofoEventListener = .init()
@@ -47,9 +49,12 @@ struct VideoLiveStreamView: View {
                     Button(action: {
                         isFill.toggle()
                     }) {
+                        let idiom = UIDevice.current.userInterfaceIdiom
+                        
                         Image(systemName: isFill ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
                             .foregroundColor(.white)
-                            .padding(10)
+                            .font(idiom == .pad ? .title : .body)
+                            .padding(idiom == .pad ? 12.0 : 10.0)
                             .background(.ultraThinMaterial)
                             .clipShape(Circle())
                     }
@@ -61,28 +66,26 @@ struct VideoLiveStreamView: View {
             if showControls {
                 HStack {
                     ViewThatFits {
-                        HStack(spacing: 16) { overlayButtons }
-                        VStack(spacing: 16) { overlayButtons }
+                        HStack(spacing: 16) { overlayButtons.transition(.opacity.combined(with: .scale)) }
+                        VStack(spacing: 16) { overlayButtons.transition(.opacity.combined(with: .scale)) }
                     }
+                    .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showControls)
                     
                     Spacer()
                     
                     Button {
                         showMenu = true
                     } label: {
+                        let idiom = UIDevice.current.userInterfaceIdiom
+                        
                         Image(systemName: "ellipsis.circle.fill")
-                            .resizable().frame(width: 30, height: 30)
+                            .resizable()
+                            .frame(width: idiom == .pad ? 48.0 : 30.0, height: idiom == .pad ? 48.0 : 30.0)
                             .foregroundColor(.white)
-                            .padding(.leading, 8)
+                            .padding(.leading, 8.0)
                     }
                     .confirmationDialog("Camera", isPresented: $showMenu, titleVisibility: .visible) {
-                        Button("Reboot Camera") {
-                            Task { @MainActor in
-                                try await Client.restartCamera()
-                            }
-                        }
-                        
-                        Button("View Files", role: .destructive) {
+                        Button("View Files") {
                             showFiles = true
                         }
                         
@@ -90,10 +93,67 @@ struct VideoLiveStreamView: View {
                             showSettings = true
                         }
                         
-                        Button("Cancel", role: .cancel) {}
+                        Button("Cancel", role: .destructive) {}
                     }
                 }
                 .padding()
+                .background(
+                    LinearGradient(colors: [Color.black.opacity(0.6), .clear],
+                                   startPoint: .bottom, endPoint: .top)
+                )
+            } else {
+                HStack(spacing: 16.0) {
+                    let idiom = UIDevice.current.userInterfaceIdiom
+                    HStack {
+                        if isMicrophone {
+                            PulsingIcon(systemName: "microphone.fill", enabled: true)
+                                .font(idiom == .pad ? .title : .body)
+                        } else {
+                            Image(systemName: "microphone.slash")
+                                .font(idiom == .pad ? .title : .body)
+                        }
+                    }
+                    .padding(.horizontal, idiom == .pad ? 18.0 : 12.0)
+                    .padding(.vertical, idiom == .pad ? 12.0 : 8.0)
+                    .background(.ultraThinMaterial)
+                    .foregroundColor(isMicrophone ? Color.green : Color.red)
+                    .clipShape(Circle())
+                    .matchedGeometryEffect(id: "microphone_button", in: controlsNamespace)
+                    
+                    HStack {
+                        if isRecording {
+                            PulsingIcon(systemName: "record.circle.fill", enabled: true)
+                                .font(idiom == .pad ? .title : .body)
+                        } else {
+                            ZStack {
+                                Image(systemName: "record.circle")
+                                    .font(idiom == .pad ? .title : .body)
+                                
+                                Rectangle()
+                                    .fill(Color.red)
+                                    .frame(width: idiom == .pad ? 40.0 : 20.0, height: 2.0)
+                                    .rotationEffect(.degrees(45.0))
+                            }
+                        }
+                    }
+                    .padding(.horizontal, idiom == .pad ? 18.0 : 12.0)
+                    .padding(.vertical, idiom == .pad ? 12.0 : 8.0)
+                    .background(.ultraThinMaterial)
+                    .foregroundColor(isRecording ? Color.green : Color.red)
+                    .clipShape(Circle())
+                    .matchedGeometryEffect(id: "record_button", in: controlsNamespace)
+                    
+                    HStack {
+                        EmptyView()
+                    }
+                    .matchedGeometryEffect(id: "photo_button", in: controlsNamespace)
+                    .matchedGeometryEffect(id: "change_camera_button", in: controlsNamespace)
+                    .hidden()
+                    
+                    Spacer()
+                }
+                .padding()
+                .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showControls)
                 .background(
                     LinearGradient(colors: [Color.black.opacity(0.6), .clear],
                                    startPoint: .bottom, endPoint: .top)
@@ -104,24 +164,28 @@ struct VideoLiveStreamView: View {
             FilesGridView(playerModel: filePlayerModel)
         }
         .sheet(isPresented: $showSettings) {
-            SettingsView()
+            SettingsScreen()
         }
         .task {
             startAutoHideTimer()
-            heartbeatModel.start()
-
+            
             do {
-                let streamData = try await Client.getLiveViewUrl()
+                heartbeatModel.start()
+                
+                let cameraKit = try await CameraKit.shared()
+                let streamData = try await cameraKit.getLiveViewUrl()
                 liveStreamURL = URL(string: streamData.movieLiveViewLink.replacingOccurrences(of: "/xxx", with: "\(Client.cameraIP)/xxx"))
                 
 //                try await Client.startLiveView()
 //                try await Client.changeToPlayBackMode2()
                 
-                print(try await Client.getVoiceControlInfo())
-                
-                let settings = try await Client.getAllSettingStatus()
-                if let recordingSetting = settings.first(where: { $0.cmd == Command.MOVIE_RECORD }) {
+                let settings = try await cameraKit.getAllSettingStatus()
+                if let recordingSetting = settings.first(where: { $0.cmd == cameraKit.command.MOVIE_RECORD }) {
                     isRecording = recordingSetting.status == 1
+                }
+                
+                if let recordingAudioSetting = settings.first(where: { $0.cmd == cameraKit.command.MICROPHONE }) {
+                    isMicrophone = recordingAudioSetting.status == 1
                 }
             } catch {
                 print("ERROR: \(error)")
@@ -137,17 +201,17 @@ struct VideoLiveStreamView: View {
                 lastInteraction = Date()
             }
         }
-        .onChange(of: eventListener.status) { value in
-            if value == 1 {
-                isRecording = true
-            } else if value == 2 {
-                isRecording = false
-            } else if value == 4 {
-                //microphone on
-            } else if value == 5 {
-                //microphone off
-            }
-        }
+//        .onChange(of: eventListener.status) { value in
+//            if value == 1 {
+//                isRecording = true
+//            } else if value == 2 {
+//                isRecording = false
+//            } else if value == 4 {
+//                isMicrophone = true
+//            } else if value == 5 {
+//                isMicrophone = false
+//            }
+//        }
         .onChange(of: heartbeatModel.status) {
             print("Heartbeat: \($0)")
         }
@@ -173,31 +237,52 @@ struct VideoLiveStreamView: View {
                 containerSize = $0;
             }
             .modifier(FitOrFillScale(isFill: isFill, videoSize: playerModel.player.videoSize, containerSize: containerSize))
-            .overlay {
-                if !playerModel.isRendering {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .controlSize(.large)
-                        .tint(Color.white)
-                }
-            }
+//            .overlay {
+//                if !playerModel.isRendering {
+//                    ProgressView()
+//                        .progressViewStyle(.circular)
+//                        .controlSize(.large)
+//                        .tint(Color.white)
+//                }
+//            }
     }
     
     private var overlayButtons: some View {
         Group {
             styledButton(
-                label: isRecording ? "Stop" : "Record",
+                label: isMicrophone ? "Mic On" : "Mic Off",
+                systemImage: isMicrophone ? "microphone.fill" : "microphone.slash",
+                color: isMicrophone ? .green : .gray,
+                canPulse: isMicrophone
+            ) {
+                Task {
+                    do {
+                        if isMicrophone {
+                            _ = try await CameraKit.shared().stopRecordingAudio()
+                        } else {
+                            _ = try await CameraKit.shared().startRecordingAudio()
+                        }
+                        
+                        isMicrophone.toggle()
+                    } catch {
+                        statusMessage = "Error: \(error.localizedDescription)"
+                    }
+                }
+            }
+            .matchedGeometryEffect(id: "microphone_button", in: controlsNamespace)
+            
+            styledButton(
+                label: isRecording ? "Stop Recording" : "Recording Off",
                 systemImage: isRecording ? "stop.circle.fill" : "record.circle.fill",
-                color: .red
+                color: isRecording ? .red : .red,
+                canPulse: isRecording
             ) {
                 Task {
                     do {
                         if isRecording {
-                            let statusMessage = try await Client.stopRecording()
-                            print(statusMessage)
+                            _ = try await CameraKit.shared().stopRecording()
                         } else {
-                            let statusMessage = try await Client.startRecording()
-                            print(statusMessage)
+                            _ = try await CameraKit.shared().startRecording()
                         }
                         
                         isRecording.toggle()
@@ -206,36 +291,39 @@ struct VideoLiveStreamView: View {
                     }
                 }
             }
+            .matchedGeometryEffect(id: "record_button", in: controlsNamespace)
             
             styledButton(
                 label: "Photo",
                 systemImage: "camera.fill",
-                color: .blue
+                color: .blue,
+                canPulse: false
             ) {
                 Task { @MainActor in
                     do {
-                        let statusMessage = try await Client.takeSnapshot()
-                        print(statusMessage)
+                        _ = try await CameraKit.shared().takeSnapshot()
                     } catch {
                         statusMessage = "Error: \(error.localizedDescription)"
                     }
                 }
             }
+            .matchedGeometryEffect(id: "photo_button", in: controlsNamespace)
             
             styledButton(
-                label: "Format",
-                systemImage: "externaldrive.fill.badge.minus",
-                color: .orange
+                label: "Change Camera",
+                systemImage: "arrow.trianglehead.2.clockwise.rotate.90.camera.fill",
+                color: .orange,
+                canPulse: false
             ) {
                 Task {
                     do {
-                        let statusMessage = try await Client.formatMemory()
-                        print(statusMessage)
+                        _ = try await CameraKit.shared().toggleLiveVideoSource()
                     } catch {
                         statusMessage = "Error: \(error.localizedDescription)"
                     }
                 }
             }
+            .matchedGeometryEffect(id: "change_camera_button", in: controlsNamespace)
         }
     }
     
@@ -247,17 +335,42 @@ struct VideoLiveStreamView: View {
         }
     }
     
-    private func styledButton(label: String, systemImage: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+    private func styledButton(label: String, systemImage: String, color: Color, canPulse: Bool, action: @escaping () -> Void) -> some View {
+        let idiom = UIDevice.current.userInterfaceIdiom
+        
+        return Button(action: action) {
             HStack {
-                Image(systemName: systemImage)
+                if canPulse {
+                    PulsingIcon(systemName: systemImage, enabled: canPulse)
+                        .font(idiom == .pad ? .title : .body)
+                } else {
+                    Image(systemName: systemImage)
+                        .font(idiom == .pad ? .title : .body)
+                }
+                
                 Text(label)
+                    .font(idiom == .pad ? .title : .body)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.horizontal, idiom == .pad ? 18.0 : 12.0)
+            .padding(.vertical, idiom == .pad ? 12.0 : 8.0)
             .background(.ultraThinMaterial)
             .foregroundColor(color)
             .clipShape(Capsule())
+        }
+    }
+    
+    struct PulsingIcon: View {
+        let systemName: String
+        var enabled: Bool = true
+        @State private var on = false
+
+        var body: some View {
+            Image(systemName: systemName)
+                .scaleEffect(enabled && on ? 1.15 : 1.0)
+                .opacity(enabled && on ? 1.0 : 0.6)
+                .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: on)
+                .onAppear { if enabled { on = true } }
+                .onDisappear { on = false }
         }
     }
 }

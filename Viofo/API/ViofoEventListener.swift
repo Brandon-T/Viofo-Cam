@@ -22,11 +22,12 @@ class ViofoEventListener: ObservableObject {
     private var connection: NWConnection
     
     init() {
-        let host = NWEndpoint.Host(Command.DEFAULT_IP)
-        let port = NWEndpoint.Port(rawValue: UInt16(Command.DEFAULT_PORT))!
+        let host = NWEndpoint.Host(Client.cameraIP)
+        let port = NWEndpoint.Port(rawValue: UInt16(Client.cameraPort))!
         
         let tcpOptions = NWProtocolTCP.Options()
         tcpOptions.enableFastOpen = true
+        tcpOptions.enableKeepalive = true
         let params = NWParameters(tls: nil, tcp: tcpOptions)
         
         connection = NWConnection(host: host, port: port, using: params)

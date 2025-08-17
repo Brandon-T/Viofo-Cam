@@ -25,7 +25,7 @@ final class HeartbeatModel: ObservableObject {
             let interval: Duration = .seconds(seconds)
             while !Task.isCancelled {
                 do {
-                    _ = try await Client.heartBeat()
+                    _ = try await CameraKit.shared().heartBeat()
                     status = .connected
                 } catch {
                     status = .disconnected

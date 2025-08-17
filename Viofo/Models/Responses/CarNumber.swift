@@ -11,10 +11,24 @@ struct CarNumber: Codable, Equatable, Hashable {
     var carNo: String?
     
     init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let carNo = try? container.decodeIfPresent(String.self, forKey: .init(stringValue: "CarNO")!)
-        let carNumber = try? container.decodeIfPresent(String.self, forKey: .init(stringValue: "CARNUMBER")!)
-        let string = try? container.decodeIfPresent(String.self, forKey: .init(stringValue: "String")!)
-        self.carNo = carNo ?? carNumber ?? string
+        let container = try decoder.container(keyedBy: AnyKey.self)
+        let candidates = ["CarNO", "CARNUMBER", "String"]
+        
+        for name in candidates {
+            let key = AnyKey(stringValue: name)
+            if let s = try container.decodeIfPresent(String.self, forKey: key) {
+                self.carNo = s.isEmpty ? nil : s
+                return
+            }
+        }
+        
+        self.carNo = nil
+    }
+    
+    private struct AnyKey: CodingKey {
+        var stringValue: String
+        var intValue: Int? { nil }
+        init?(intValue: Int) { return nil }
+        init(stringValue: String) { self.stringValue = stringValue }
     }
 }

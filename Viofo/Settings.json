@@ -1,7 +1,7 @@
 {
   "settings": [
     {
-      "name": "Movie Resolution",
+      "name": "Video Resolution",
       "command": "MOVIE_RESOLUTION",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
@@ -28,11 +28,11 @@
       "type": "parameter",
       "description": "Sets the duration of each video file before a new one is created.",
       "options": [
-        { "display": "1min", "value": 1 },
+        { "display": "1 min", "value": 1 },
         { "display": "2 mins", "value": 2 },
         { "display": "3 mins", "value": 3 },
-        { "display": "5mins", "value": 4 },
-        { "display": "10mins", "value": 5 }
+        { "display": "5 mins", "value": 4 },
+        { "display": "10 mins", "value": 5 }
       ]
     },
     {
@@ -102,8 +102,32 @@
       ]
     },
     {
-      "name": "HDR",
+      "name": "HDR (Front Camera)",
       "command": "FRONT_CAMERA_HDR",
+      "available": ["A229", "A329"],
+      "type": "parameter",
+      "description": "Enables or disables High Dynamic Range (HDR) for the camera.",
+      "options": [
+        { "display": "OFF", "value": 0 },
+        { "display": "ON", "value": 1 },
+        { "display": "AUTO HDR TIME", "value": 2 }
+      ]
+    },
+    {
+      "name": "HDR (Interior Camera)",
+      "command": "INTERIOR_CAMERA_HDR",
+      "available": ["A229", "A329"],
+      "type": "parameter",
+      "description": "Enables or disables High Dynamic Range (HDR) for the camera.",
+      "options": [
+        { "display": "OFF", "value": 0 },
+        { "display": "ON", "value": 1 },
+        { "display": "AUTO HDR TIME", "value": 2 }
+      ]
+    },
+    {
+      "name": "HDR (Rear Camera)",
+      "command": "REAR_CAMERA_HDR",
       "available": ["A229", "A329"],
       "type": "parameter",
       "description": "Enables or disables High Dynamic Range (HDR) for the camera.",
@@ -118,7 +142,7 @@
       "command": "HDR_TIME",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
-      "description": "Format=HH:MM:SS-HH:MM:SS",
+      "description": "Sets HDR to turn on during a specific time range.",
       "options": [
         { "display": "16:00:00 - 06:00:00", "value": "16:00:00-06:00:00" },
         { "display": "17:00:00 - 07:00:00", "value": "17:00:00-07:00:00" }
@@ -271,14 +295,14 @@
       "command": "SET_TIME",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
-      "description": "Format=HH:MM:SS"
+      "description": "Synchronizes the Camera's time with your Phone's time."
     },
     {
       "name": "Set Date",
       "command": "SET_DATE",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "string",
-      "description": "Format=YYYY-MM-DD"
+      "description": "Synchronizes the Camera's date with your Phone's date."
     },
     {
       "name": "Boot Delay",
@@ -399,12 +423,12 @@
       "description": "Configures the camera's behavior when parked.",
       "options": [
         { "display": "OFF", "value": 0 },
-        { "display": "Time-Lapse 1FPS - Night Vision", "value": 1 },
-        { "display": "Time-Lapse 1FPS", "value": 2 },
-        { "display": "Time-Lapse 2FPS", "value": 3 },
-        { "display": "Time-Lapse 3FPS", "value": 4 },
-        { "display": "Time-Lapse 5FPS", "value": 5 },
-        { "display": "Time-Lapse 10FPS", "value": 6 },
+        { "display": "Time-Lapse 1 FPS - Night Vision", "value": 1 },
+        { "display": "Time-Lapse 1 FPS", "value": 2 },
+        { "display": "Time-Lapse 2 FPS", "value": 3 },
+        { "display": "Time-Lapse 3 FPS", "value": 4 },
+        { "display": "Time-Lapse 5 FPS", "value": 5 },
+        { "display": "Time-Lapse 10 FPS", "value": 6 },
         { "display": "Low Bitrate Recording", "value": 7 },
         { "display": "Auto Event Detection", "value": 8 }
       ]
@@ -417,26 +441,26 @@
       "description": "Sets the duration after which the camera will shut off in parking mode to protect the vehicle's battery.",
       "options": [
         { "display": "Continuous Recording", "value": 0 },
-        { "display": "30mins", "value": 1 },
-        { "display": "1hr", "value": 2 },
-        { "display": "2hrs", "value": 3 },
-        { "display": "3hrs", "value": 4 },
-        { "display": "4hrs", "value": 5 },
-        { "display": "6hrs", "value": 6 },
-        { "display": "8hrs", "value": 7 },
-        { "display": "12hrs", "value": 8 },
-        { "display": "24hrs", "value": 9 },
-        { "display": "48hrs", "value": 10 }
+        { "display": "30 mins", "value": 1 },
+        { "display": "1 hr", "value": 2 },
+        { "display": "2 hrs", "value": 3 },
+        { "display": "3 hrs", "value": 4 },
+        { "display": "4 hrs", "value": 5 },
+        { "display": "6 hrs", "value": 6 },
+        { "display": "8 hrs", "value": 7 },
+        { "display": "12 hrs", "value": 8 },
+        { "display": "24 hrs", "value": 9 },
+        { "display": "48 hrs", "value": 10 }
       ]
     },
     {
-      "name": "Query HK6 hardwire kit status",
+      "name": "Vehicle Battery Protection Cut-Off Voltage",
       "command": "BATTERY_CUT_OFF_VOLTAGE",
       "available": ["A329"],
       "type": "parameter",
-      "description": "Query if HK6 hardwire kit is installed",
+      "description": "Shuts off parking mode if the battery reaches below this voltage level.",
       "options": [
-        { "display": "Query if HK6 hardwire kit is installed", "value": "querry" }
+        { "display": "Voltage Level", "value": "querry" }
       ]
     },
     {
@@ -541,6 +565,19 @@
       ]
     },
     {
+      "name": "Multiplex Video",
+      "command": "MULTIPLEX_VIDEO",
+      "available": ["A139", "A139Pro", "A229", "A329"],
+      "type": "parameter",
+      "description": "Combines video/audio from selected cameras, into one video",
+      "options": [
+        { "display": "OFF", "value": 0 },
+        { "display": "Front + Telephoto", "value": 1 },
+        { "display": "Front + Rear", "value": 2 },
+        { "display": "Front + Telephoto + Rear", "value": 3 }
+      ]
+    },
+    {
       "name": "Notification Sounds",
       "command": "BEEP_SOUND",
       "available": ["A139", "A139Pro", "A229", "A329"],
@@ -577,12 +614,12 @@
     },
     {
       "name": "List Voice Commands",
-      "command": "GET_WIFI_SSID_PASSWORD",
+      "command": "VOICE_CONTROL_INFO",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
       "description": "This is a query command to get the list of voice commands.",
       "options": [
-        { "display": "Get Voice Commands", "value": "" }
+        { "display": "Voice Commands", "value": "" }
       ]
     },
     {
@@ -590,8 +627,13 @@
       "command": "LIVE_VIDEO_SOURCE",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
-      "description": "This is a query command to get the video source.",
-      "options": []
+      "description": "Sets which cameras to display when streaming live",
+      "options": [
+          { "display": "Front Camera", "value": "0"},
+          { "display": "Front Telephoto Camera", "value": "1"},
+          { "display": "Rear Camera", "value": "2"},
+          { "display": "All Cameras", "value": "5"}
+      ]
     },
     {
       "name": "Privacy Mode",
@@ -679,11 +721,11 @@
       "type": "parameter",
       "description": "Sets the time delay before the screen saver activates.",
       "options": [
-        { "display": "3s", "value": 0 },
-        { "display": "15s", "value": 1 },
-        { "display": "30s", "value": 2 },
-        { "display": "1min", "value": 3 },
-        { "display": "3mins", "value": 4 }
+        { "display": "3 Seconds", "value": 0 },
+        { "display": "15 Seconds", "value": 1 },
+        { "display": "30 Seconds", "value": 2 },
+        { "display": "1 Minute", "value": 3 },
+        { "display": "3 Minutes", "value": 4 }
       ]
     },
     {
@@ -828,14 +870,35 @@
       "description": "Set Car License Number Stamp"
     },
     {
+      "name": "Format SD-CARD",
+      "command": "FORMAT_MEMORY",
+      "available": ["A139", "A139Pro", "A229", "A329"],
+      "type": "parameter",
+      "description": "Erases all Photos and Videos on the SD Card.",
+      "warning": "Are you sure you want to format the SD Card?",
+    },
+    {
+      "name": "Format SSD",
+      "command": "FORMAT_SSD",
+      "available": ["A139", "A139Pro", "A229", "A329"],
+      "type": "parameter",
+      "description": "Erases all Photos and Videos on the external SSD",
+      "warning": "Are you sure you want to format the SSD?",
+    },
+    {
+      "name": "Free Space Available",
+      "command": "CARD_FREE_SPACE",
+      "available": ["A139", "A139Pro", "A229", "A329"],
+      "type": "parameter",
+      "description": "",
+    },
+    {
       "name": "Factory Reset",
       "command": "RESET_SETTING",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
-      "description": "Resets the camera to factory default settings.",
-      "options": [
-        { "display": "Reset Camera Settings", "value": "" }
-      ]
+      "description": "Erases all camera settings and sets them to factory settings.",
+      "warning": "Are you sure you want to reset the camera to factory settings?",
     },
     {
       "name": "Restart Camera",
@@ -843,20 +906,15 @@
       "command": "RESTART_CAMERA",
       "available": ["A119", "A129", "A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
-      "description": "Restarts the camera.",
-      "options": [
-        { "display": "Restart Camera", "value": "" }
-      ]
+      "description": "Reboots the camera.",
+      "warning": "Are you sure you want to restart the Camera?",
     },
     {
       "name": "Firmware Version",
       "command": "FIRMWARE_VERSION",
       "available": ["A139", "A139Pro", "A229", "A329"],
       "type": "parameter",
-      "description": "Retrieves the current firmware version of the camera.",
-      "options": [
-        { "display": "Get Firmware Version", "value": "" }
-      ]
+      "description": "",
     }
   ]
 }

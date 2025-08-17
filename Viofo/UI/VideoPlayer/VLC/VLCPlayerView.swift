@@ -16,12 +16,6 @@ import SwiftUI
 class VLCPlayerModel: ObservableObject {
     let player: VLCMediaPlayer
     
-    @Published
-    fileprivate(set) var isLoading: Bool = false
-    
-    @Published
-    fileprivate(set) var isRendering: Bool = false
-    
     fileprivate let playerView: UIView
     
     init() {
@@ -170,28 +164,13 @@ struct VLCPlayerView: UIViewRepresentable {
     
     class Coordinator: NSObject, VLCMediaPlayerDelegate {
         private weak var model: VLCPlayerModel?
-        private var lastPTS: VLCTime?
-        private var lastAdvanceAt = Date.distantPast
         
         init(model: VLCPlayerModel) {
             self.model = model
         }
         
         func mediaPlayerTimeChanged(_ note: Notification) {
-            guard let model = model else { return }
-            let player = model.player
             
-            if let last = lastPTS, player.time.intValue > last.intValue {
-                model.isRendering = true
-                lastAdvanceAt = Date()
-            } else {
-                // If we're "playing" but time hasn't advanced for a bit, we're stalled
-                if player.state == .playing && Date().timeIntervalSince(lastAdvanceAt) > 1.0 {
-                    model.isRendering = false
-                }
-            }
-            
-            lastPTS = player.time
         }
         
         func mediaPlayerStateChanged(_ aNotification: Notification) {
@@ -200,22 +179,15 @@ struct VLCPlayerView: UIViewRepresentable {
             
             switch player.state {
             case .opening, .buffering:
-                model.isLoading = true
-                model.isRendering = false
+                break
                 
             case .playing:
-                model.isLoading = false
+                break
                 
             case .paused:
-                model.isLoading = false
-                model.isRendering = false
+                break
                 
             case .stopped, .ended, .error:
-                model.isLoading = false
-                model.isRendering = false
-                lastPTS = nil
-                lastAdvanceAt = .distantPast
-                
                 Task { @MainActor [weak model] in
                     try await Task.sleep(for: .milliseconds(2000))
                     model?.player.play()

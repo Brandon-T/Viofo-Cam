@@ -39,45 +39,53 @@ struct ThumbnailView: View {
             isLoading = true
             defer { isLoading = false }
             
+            // first check cache
             if let cached = await VideoThumbCache.shared.image(for: url) {
                 image = cached
                 return
             }
             
-            if file.isImage == true {
-                var request = URLRequest(url: url)
-                request.timeoutInterval = 30
-
-                do {
+            if let img = await fetchImage(url: url) {
+                await VideoThumbCache.shared.set(img, for: url)
+                image = img
+            } else {
+                print("FAILED after retries")
+            }
+        }
+    }
+    
+    private func fetchImage(url: URL, maxRetries: Int = 3, delaySeconds: Double = 2.0) async -> UIImage? {
+        for attempt in 1...maxRetries {
+            do {
+                if file.isImage == true {
+                    var request = URLRequest(url: url)
+                    request.timeoutInterval = 30
+                    
                     let (data, response) = try await URLSession.shared.data(for: request)
                     
                     guard let http = response as? HTTPURLResponse,
                           (200..<300).contains(http.statusCode),
                           !data.isEmpty else {
-                        return
+                        throw URLError(.badServerResponse)
                     }
                     
                     if let img = UIImage(data: data) {
-                        await VideoThumbCache.shared.set(img, for: url)
-                        image = img
+                        return img
+                    } else {
+                        throw URLError(.cannotDecodeContentData)
                     }
-                } catch {
-                    // leave placeholder
-                    print("FAILED TO DOWNLOAD IMAGE")
+                } else {
+                    // video thumb
+                    let img = try await Self.firstFrame(url: url)
+                    return img
                 }
-                
-                return
-            }
-            
-            do {
-                let img = try await Self.firstFrame(url: url)
-                await VideoThumbCache.shared.set(img, for: url)
-                image = img
             } catch {
-                // leave placeholder
-                print("FAILED TO DOWNLOAD IMAGE")
+                if attempt < maxRetries {
+                    try? await Task.sleep(nanoseconds: UInt64(delaySeconds * 1_000_000_000))
+                }
             }
         }
+        return nil
     }
     
     private static func firstFrame(url: URL, maxDimension: CGFloat = 240) async throws -> UIImage {

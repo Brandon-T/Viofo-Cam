@@ -19,12 +19,21 @@ public struct Setting: Decodable, Identifiable {
     public let available: [String]
     public let type: String
     public let description: String
+    public let warning: String?
     public let depends_on: SettingsDependency?
     public let options: [SettingsOption]?
     public let options_alt: [SettingsOption]?
-
-    enum CodingKeys: String, CodingKey {
-        case name, command, available, type, description, depends_on, options, options_alt
+    
+    init(name: String, command: String, available: [String], type: String, description: String, warning: String? = nil, depends_on: SettingsDependency? = nil, options: [SettingsOption]? = nil, options_alt: [SettingsOption]? = nil) {
+        self.name = name
+        self.command = command
+        self.available = available
+        self.type = type
+        self.description = description
+        self.warning = warning
+        self.depends_on = depends_on
+        self.options = options
+        self.options_alt = options_alt
     }
 
     public init(from decoder: Decoder) throws {
@@ -34,20 +43,43 @@ public struct Setting: Decodable, Identifiable {
         self.available = try container.decode([String].self, forKey: .available)
         self.type = try container.decode(String.self, forKey: .type)
         self.description = try container.decode(String.self, forKey: .description)
+        self.warning = try container.decodeIfPresent(String.self, forKey: .warning)
         self.depends_on = try container.decodeIfPresent(SettingsDependency.self, forKey: .depends_on)
         self.options = try container.decodeIfPresent([SettingsOption].self, forKey: .options)
         self.options_alt = try container.decodeIfPresent([SettingsOption].self, forKey: .options_alt)
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case command
+        case available
+        case type
+        case description
+        case warning
+        case depends_on
+        case options
+        case options_alt
     }
 }
 
 public struct SettingsDependency: Codable {
     public let command: String
     public let values: [Int]
+    
+    init(command: String, values: [Int]) {
+        self.command = command
+        self.values = values
+    }
 }
 
 public struct SettingsOption: Codable {
     public let display: String
     public let value: String
+    
+    init(display: String, value: String) {
+        self.display = display
+        self.value = value
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

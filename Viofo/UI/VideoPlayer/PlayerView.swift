@@ -16,12 +16,14 @@ struct PlayerView: View {
     @State private var isFill: Bool = false
     
     @StateObject private var playerModel: VLCPlayerModel
+    @StateObject private var playerObserver: VLCPlayerObserver
     
     private var url: URL
     private var autoHideDelay: TimeInterval = 3.0
     
     init(playerModel: VLCPlayerModel, url: URL) {
         self._playerModel = .init(wrappedValue: playerModel)
+        self._playerObserver = .init(wrappedValue: VLCPlayerObserver(player: playerModel.player))
         self.url = url
     }
     
@@ -83,7 +85,7 @@ struct PlayerView: View {
         }
         .overlay(alignment: .bottom) {
             if showControls {
-                PlayerControls(model: playerModel)
+                PlayerControls(model: playerModel, observer: playerObserver)
                     .padding(.bottom, 8.0)
                     .opacity(showControls ? 1.0 : 0.0)
                     .animation(.easeInOut(duration: 0.2), value: showControls)
@@ -110,9 +112,9 @@ private struct PlayerControls: View {
     @State private var isScrubbing: Bool = false
     @State private var scrubbingPosition: Double = 0.0
     
-    init(model: VLCPlayerModel) {
+    init(model: VLCPlayerModel, observer: VLCPlayerObserver) {
         self.model = model
-        self._observer = .init(initialValue: VLCPlayerObserver(player: model.player))
+        self._observer = .init(initialValue: observer)
         self._scrubbingPosition = .init(initialValue: Double(model.player.position))
     }
 

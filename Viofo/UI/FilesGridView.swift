@@ -122,7 +122,7 @@ struct FilesGridView: View {
                         Button {
                             Task { @MainActor in
                                 for file in editingFiles {
-                                    _ = try await Client.deleteOneFile(file.filePath)
+                                    _ = try await CameraKit.shared().deleteOneFile(file.filePath)
                                 }
                                 
                                 isEditing = false
@@ -162,7 +162,7 @@ struct FilesGridView: View {
     
     @MainActor
     private func refreshFiles() async {
-        let files = (try? await Client.getFileList()) ?? []
+        let files = (try? await CameraKit.shared().getFileList()) ?? []
         self.files = files.sorted(by: { a, b in
             a.timeCode > b.timeCode
         })
